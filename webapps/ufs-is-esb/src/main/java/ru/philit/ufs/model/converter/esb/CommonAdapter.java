@@ -24,6 +24,10 @@ public abstract class CommonAdapter {
     return (number != null) ? BigInteger.valueOf(number) : null;
   }
 
+  protected static Integer integerValue(BigInteger bigInteger){
+    return (bigInteger != null) ? bigInteger.intValue() : null;
+  }
+
   protected static XMLGregorianCalendar xmlCalendar(Date date) {
     if (date == null) {
       return null;

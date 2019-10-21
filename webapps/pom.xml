@@ -37,7 +37,7 @@
     <checkstyle.version>6.19</checkstyle.version>
     <guava.version>21.0</guava.version>
     <j2ee.version>7.0</j2ee.version>
-    <java.version>1.7</java.version>
+    <java.version>1.8</java.version>
     <joda-time.version>2.9.9</joda-time.version>
     <junit-dataprovider.version>1.10.4</junit-dataprovider.version>
     <hazelcast.version>3.8.1</hazelcast.version>
@@ -88,6 +88,12 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- Servlet API -->
     <dependency>

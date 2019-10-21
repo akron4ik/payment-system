@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 import com.hazelcast.core.IMap;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,21 +44,8 @@ import ru.philit.ufs.model.entity.account.RepresentativeRequest;
 import ru.philit.ufs.model.entity.account.Seizure;
 import ru.philit.ufs.model.entity.common.ExternalEntityContainer;
 import ru.philit.ufs.model.entity.common.LocalKey;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
-import ru.philit.ufs.model.entity.oper.CashSymbol;
-import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
-import ru.philit.ufs.model.entity.oper.Operation;
-import ru.philit.ufs.model.entity.oper.OperationPackage;
-import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
-import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
-import ru.philit.ufs.model.entity.oper.OperationType;
-import ru.philit.ufs.model.entity.oper.OperationTypeFavourite;
-import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex1;
-import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex2;
-import ru.philit.ufs.model.entity.user.ClientInfo;
-import ru.philit.ufs.model.entity.user.Operator;
-import ru.philit.ufs.model.entity.user.User;
+import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.user.*;
 import ru.philit.ufs.service.AuditService;
 import ru.philit.ufs.web.exception.UserNotFoundException;
 
@@ -71,6 +59,7 @@ public class HazelcastCacheImpl
 
   private final HazelcastBeClient client;
   private final AuditService auditService;
+  private static final BigDecimal MAX_LIMIT = new BigDecimal("5000000.0");
 
   @Autowired
   public HazelcastCacheImpl(HazelcastBeClient client, AuditService auditService) {
@@ -305,5 +294,37 @@ public class HazelcastCacheImpl
 
   private <T> T getFirst(List<T> list) {
     return (list != null) ? Iterables.getFirst(list, null) : null;
+  }
+
+  @Override
+  public Workplace getWorkplace(String workplaceId) {
+    Workplace workplace = new Workplace();
+
+    workplace.setType(WorkplaceType.UWP);
+    workplace.setCashboxOnBoard(true);
+    workplace.setSubbranchCode("1385930100");
+    workplace.setCashboxDeviceId("530690F50B9E49A6B3EDAE2CF6B7CC4F");
+    workplace.setCashboxDeviceType("CashierPro2520-sx");
+    workplace.setCurrencyType("RUB");
+    workplace.setAmount(new BigDecimal("100000.0"));
+    workplace.setLimit(new BigDecimal("500000.0"));
+    workplace.setCategoryLimits(new ArrayList<OperationTypeLimit>());
+
+    OperationTypeLimit categoryLimit1 = new OperationTypeLimit();
+    categoryLimit1.setCategoryId("0");
+    categoryLimit1.setLimit(new BigDecimal("50000.0"));
+    workplace.getCategoryLimits().add(categoryLimit1);
+
+    OperationTypeLimit categoryLimit2 = new OperationTypeLimit();
+    categoryLimit2.setCategoryId("1");
+    categoryLimit2.setLimit(new BigDecimal("15000.0"));
+    workplace.getCategoryLimits().add(categoryLimit2);
+
+    return workplace;
+  }
+
+  @Override
+  public boolean checkOverLimit(BigDecimal amount) {
+    return amount.compareTo(MAX_LIMIT) <= 0;
   }
 }

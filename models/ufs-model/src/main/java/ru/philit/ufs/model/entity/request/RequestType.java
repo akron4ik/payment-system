@@ -29,6 +29,10 @@ public class RequestType {
   public static final String OPER_TYPES_BY_ROLE = "OPER_TYPES_BY_ROLE";
   public static final String OPERATOR_BY_USER = "OPERATOR_BY_USER";
   public static final String CASH_SYMBOL = "CASH_SYMBOL";
+  public static final String CREATE_CASHORDER = "CREATE_CASHORDER";
+  public static final String GET_WORKPLACE_INFO = "GET_WORKPLACE_INFO";
+  public static final String UPDATE_CASHORDER_STATUS = "UPDATE_CASHORDER_STATUS";
+  public static final String CHECK_OVER_LIMIT = "CHECK_OVER_LIMIT";
 
   private RequestType() {}
 

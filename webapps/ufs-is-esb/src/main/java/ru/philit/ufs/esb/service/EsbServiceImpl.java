@@ -3,6 +3,7 @@ package ru.philit.ufs.esb.service;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.resource.spi.work.Work;
 import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ import ru.philit.ufs.esb.ReceiveMessageListener;
 import ru.philit.ufs.esb.client.EsbClient;
 import ru.philit.ufs.model.cache.IsEsbCache;
 import ru.philit.ufs.model.converter.esb.JaxbConverter;
+import ru.philit.ufs.model.converter.esb.asfs.CashOrderAdapter;
+import ru.philit.ufs.model.converter.esb.asfs.CheckOverAdapter;
 import ru.philit.ufs.model.converter.esb.eks.AccountAdapter;
 import ru.philit.ufs.model.converter.esb.eks.CheckFraudAdapter;
 import ru.philit.ufs.model.converter.esb.eks.CommissionAdapter;
@@ -30,6 +33,10 @@ import ru.philit.ufs.model.entity.account.AccountOperationRequest;
 import ru.philit.ufs.model.entity.account.RepresentativeRequest;
 import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.common.ExternalEntityRequest;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCheckOverLimitRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvUpdStCashOrderRq;
 import ru.philit.ufs.model.entity.esb.eks.SrvAccountByCardNumRq;
 import ru.philit.ufs.model.entity.esb.eks.SrvAccountByIdRq;
 import ru.philit.ufs.model.entity.esb.eks.SrvAccountResiduesByIdRq;
@@ -54,13 +61,9 @@ import ru.philit.ufs.model.entity.esb.pprb.SrvGetRepByCardRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvGetUserOperationsByRoleRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvSearchRepRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvUpdCashDepAnmntItemRq;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
-import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
-import ru.philit.ufs.model.entity.oper.OperationPackage;
-import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
-import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+import ru.philit.ufs.model.entity.oper.*;
 import ru.philit.ufs.model.entity.request.RequestType;
+import ru.philit.ufs.model.entity.user.Workplace;
 
 /**
  * Сервис на маршрутизацию сообщений между Hazelcast и КСШ.
@@ -73,14 +76,16 @@ public class EsbServiceImpl
 
   private static final String EKS_CONTEXT_PATH = "ru.philit.ufs.model.entity.esb.eks";
   private static final String PPRB_CONTEXT_PATH = "ru.philit.ufs.model.entity.esb.pprb";
+  private static final String ASFS_CONTEXT_PATH ="ru.philit.ufs.model.entity.esb.asfs";
 
   private final EsbClient esbClient;
   private final IsEsbCache isEsbCache;
 
   private final JaxbConverter eksConverter = new JaxbConverter(EKS_CONTEXT_PATH);
   private final JaxbConverter pprbConverter = new JaxbConverter(PPRB_CONTEXT_PATH);
+  private final JaxbConverter asfsConverter = new JaxbConverter(ASFS_CONTEXT_PATH);
   private final List<JaxbConverter> jaxbConverters = ImmutableList.of(
-      eksConverter, pprbConverter
+      eksConverter, pprbConverter, asfsConverter
   );
 
   @Autowired
@@ -325,6 +330,36 @@ public class EsbServiceImpl
           }
           break;
 
+        case RequestType.CREATE_CASHORDER:
+          if(isCreateCashOrderRequest(entityRequest)) {
+            SrvCreateCashOrderRq request = CashOrderAdapter.requestCreateOrder((CashOrder) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+          break;
+
+        case RequestType.UPDATE_CASHORDER_STATUS:
+          if(isUpdateCashOrderRequest(entityRequest)) {
+            SrvUpdStCashOrderRq request = CashOrderAdapter.requestUpdCashOrder((CashOrder) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+
+        case RequestType.GET_WORKPLACE_INFO:
+          if(isGetWorkplaceRequest(entityRequest)) {
+            SrvGetWorkPlaceInfoRq request = CashOrderAdapter.requestGetWorkPlace((Workplace) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+          break;
+
+        case RequestType.CHECK_OVER_LIMIT:
+          if(isCheckOverLimitRequest(entityRequest)) {
+            SrvCheckOverLimitRq request = CheckOverAdapter.requestCheckLimit((CheckOverLimit) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+
         default:
           logger.error("Sending ExternalEntityRequest with unknown entityType {}",
               entityRequest.getEntityType());
@@ -384,6 +419,26 @@ public class EsbServiceImpl
   private boolean isCashSymbolRequest(ExternalEntityRequest entityRequest) {
     return entityRequest.getRequestData() != null
         && entityRequest.getRequestData() instanceof CashSymbolRequest;
+  }
+
+  private boolean isCreateCashOrderRequest(ExternalEntityRequest entityRequest) {
+    return entityRequest.getRequestData() != null
+        && entityRequest.getRequestData() instanceof CashOrder;
+  }
+
+  private boolean isUpdateCashOrderRequest(ExternalEntityRequest entityRequest) {
+    return entityRequest.getRequestData() != null
+            && entityRequest.getRequestData() instanceof CashOrder;
+  }
+
+  private boolean isGetWorkplaceRequest(ExternalEntityRequest entityRequest) {
+    return entityRequest.getRequestData() != null
+            && entityRequest.getRequestData() instanceof Workplace;
+  }
+
+  private boolean isCheckOverLimitRequest(ExternalEntityRequest entityRequest) {
+    return entityRequest.getRequestData() != null
+            && entityRequest.getRequestData() instanceof CheckOverLimit;
   }
 
   /**
