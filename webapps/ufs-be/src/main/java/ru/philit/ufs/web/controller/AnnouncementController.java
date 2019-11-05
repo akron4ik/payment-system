@@ -9,16 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
 import ru.philit.ufs.model.entity.user.ClientInfo;
+import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.mapping.AnnouncementMapper;
 import ru.philit.ufs.web.provider.AnnouncementProvider;
-import ru.philit.ufs.web.view.GetAccount20202Req;
-import ru.philit.ufs.web.view.GetAccount20202Resp;
-import ru.philit.ufs.web.view.GetAnnouncementReq;
-import ru.philit.ufs.web.view.GetAnnouncementResp;
-import ru.philit.ufs.web.view.GetAnnouncementsReq;
-import ru.philit.ufs.web.view.GetAnnouncementsResp;
-import ru.philit.ufs.web.view.GetCommissionReq;
-import ru.philit.ufs.web.view.GetCommissionResp;
+import ru.philit.ufs.web.view.*;
 
 /**
  * Контроллер действий с объявлениями на взнос наличных.
@@ -102,4 +96,14 @@ public class AnnouncementController {
     return new GetAccount20202Resp().withSuccess(number);
   }
 
+  /**
+   * Получение данных по рабочему месту и лимитов по операциям.
+   *
+   * @param clientInfo информация о клиенте
+   */
+  @RequestMapping(value = "/workplace", method = RequestMethod.POST)
+  public GetWorkplaceResp getWorkplace(@RequestBody GetWorkplaceReq workplaceReq,  ClientInfo clientInfo) {
+    Workplace workplace = provider.getWorkplace(workplaceReq.getWorkplaceId(), clientInfo);
+    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
+  }
 }

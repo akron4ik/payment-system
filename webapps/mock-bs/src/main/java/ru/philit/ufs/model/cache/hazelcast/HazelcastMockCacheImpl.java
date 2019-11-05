@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hazelcast.core.IMap;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -17,12 +18,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.philit.ufs.model.cache.MockCache;
+import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
+import ru.philit.ufs.model.entity.esb.asfs.LimitStatusType;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.eks.PkgStatusType;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.esb.eks.SrvGetTaskClOperPkgRs.SrvGetTaskClOperPkgRsMessage;
@@ -35,6 +41,7 @@ import ru.philit.ufs.model.entity.oper.OperationPackageInfo;
 public class HazelcastMockCacheImpl implements MockCache {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final BigDecimal MAX_LIMIT = new BigDecimal("5000000.0");
 
   private final HazelcastMockServer hazelcastServer;
   private final ObjectMapper jsonMapper;
@@ -78,6 +85,27 @@ public class HazelcastMockCacheImpl implements MockCache {
   public Long saveTaskCheckbookIssuing(Long packageId, Long taskId, Object taskBody) {
     return saveTask(hazelcastServer.getTasksCheckbookIssuingByPackageId(), packageId, taskId,
         taskBody);
+  }
+
+  @Override
+  public void saveCashOrders(String cashOrderId, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody){
+    hazelcastServer.getCashOrders().putIfAbsent(cashOrderId, taskBody);
+  }
+
+  @Override
+  public void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st){
+    hazelcastServer.getCashOrders().get(cashOrderId).setCashOrderStatus(st);
+  }
+
+  @Override
+  public Boolean checkOverLimit(String userLogin, BigDecimal amount){
+   if(hazelcastServer.getCheckOverLimit().get(userLogin) == null){
+     hazelcastServer.getCheckOverLimit().put(userLogin, amount);
+   }else{
+     hazelcastServer.getCheckOverLimit().computeIfPresent(userLogin, (k,v) -> v.add(amount));
+   }
+   return hazelcastServer.getCheckOverLimit().get(userLogin).compareTo(MAX_LIMIT) <= 0;
+
   }
 
   private synchronized Long saveTask(IMap<Long, Map<Long, String>> collection, Long packageId,

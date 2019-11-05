@@ -1,8 +1,11 @@
 package ru.philit.ufs.model.converter.esb.asfs;
 
+import ru.philit.ufs.model.entity.account.Representative;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
 import ru.philit.ufs.model.entity.esb.asfs.*;
 import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashOrderType;
+import ru.philit.ufs.model.entity.user.Subbranch;
 import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.model.entity.user.WorkplaceType;
 
@@ -19,59 +22,43 @@ public class CashOrderAdapter extends AsfsAdapter {
 
     }
 
-    private static CashOrderStatusType cashOrderStatusType(CashOrderStatusTypeCode cashOrderStatusTypeCode) {
-        return (cashOrderStatusTypeCode != null) ? CashOrderStatusType.fromValue(cashOrderStatusTypeCode.code()) : null;
+    private static CashOrderStatusType cashOrderStatusType(CashOrderStatus cashOrderStatus) {
+        return (cashOrderStatus != null) ? CashOrderStatusType.fromValue(cashOrderStatus.code()) : null;
     }
 
-    private static CashOrderStatusTypeCode cashOrderStatusTypeCode(CashOrderStatusType cashOrderStatusType) {
-        return (cashOrderStatusType != null) ? CashOrderStatusTypeCode.getByCode(cashOrderStatusType.value()) : null;
+    private static CashOrderStatus cashOrderStatusTypeCode(CashOrderStatusType cashOrderStatusType) {
+        return (cashOrderStatusType != null) ? CashOrderStatus.getByCode(cashOrderStatusType.value()) : null;
     }
 
-    private static CashOrderTypeCode cashOrderTypeCode(CashOrderType cashOrderType) {
-        return (cashOrderType != null) ? CashOrderTypeCode.getByCode(cashOrderType.value()) : null;
+    private static CashOrderType cashOrderTypeCode(ru.philit.ufs.model.entity.esb.asfs.CashOrderType cashOrderType) {
+        return (cashOrderType != null) ? CashOrderType.getByCode(cashOrderType.value()) : null;
     }
 
-
-
-
-    private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData(CashOrder cashOrder){
+    private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData(Representative representative) {
         SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData = new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData();
-        repData.setRepID(cashOrder.getRepData().getId());
-        repData.setAddress(cashOrder.getRepData().getAddress());
-        repData.setDateOfBirth(xmlCalendar(cashOrder.getRepData().getBirthDate()));
-        repData.setPlaceOfBirth(cashOrder.getRepData().getPlaceOfBirth());
-        repData.setINN(cashOrder.getRepData().getInn());
-        repData.setRepFIO(cashOrder.getRepData().getLastName() + " " + cashOrder.getRepData().getFirstName() + " " + cashOrder.getRepData().getPatronymic());
-        repData.setResident(cashOrder.getRepData().isResident());
-
+        if (representative != null) {
+            repData.setAddress(representative.getAddress());
+            repData.setDateOfBirth(xmlCalendar(representative.getBirthDate()));
+            repData.setINN(representative.getInn());
+            repData.setPlaceOfBirth(representative.getPlaceOfBirth());
+            repData.setRepFIO(
+                    representative.getLastName() + " " + representative.getFirstName() + " " + representative
+                            .getPatronymic());
+            repData.setRepID(representative.getId());
+            repData.setResident(representative.isResident());
+        }
         return repData;
-
     }
 
-    private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo(CashOrder cashOrder){
+    private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo(Subbranch subbranch){
         SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo = new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo();
-
-        additionalInfo.setAccount20202Num(cashOrder.getAccount20202Num());
-        if (cashOrder.getCashSymbols() != null) {
-            SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo.CashSymbols cashSymbols =
-                    new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo.CashSymbols();
-            for (CashSymbol cashSymbol : cashOrder.getCashSymbols()) {
-                SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo.CashSymbols.CashSymbolItem cashSymbolItem =
-                        new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo.CashSymbols.CashSymbolItem();
-                cashSymbolItem.setCashSymbol(cashSymbol.getCode());
-                cashSymbolItem.setCashSymbolAmount(cashSymbol.getAmount());
-                cashSymbols.getCashSymbolItem().add(cashSymbolItem);
-            }
-            additionalInfo.setCashSymbols(cashSymbols);
+        if (subbranch != null) {
+            additionalInfo.setGOSBCode(subbranch.getGosbCode());
+            additionalInfo.setOSBCode(subbranch.getOsbCode());
+            additionalInfo.setSubbranchCode(subbranch.getSubbranchCode());
+            additionalInfo.setTBCode(subbranch.getTbCode());
+            additionalInfo.setVSPCode(subbranch.getVspCode());
         }
-        additionalInfo.setComment(cashOrder.getComment());
-        additionalInfo.setGOSBCode(cashOrder.getSubbranch().getGosbCode());
-        additionalInfo.setOSBCode(cashOrder.getSubbranch().getOsbCode());
-        additionalInfo.setSubbranchCode(cashOrder.getSubbranch().getSubbranchCode());
-        additionalInfo.setTBCode(cashOrder.getSubbranch().getTbCode());
-        additionalInfo.setVSPCode(cashOrder.getSubbranch().getVspCode());
-        additionalInfo.setUserLogin(cashOrder.getUserLogin());
-
         return additionalInfo;
 
     }
@@ -88,8 +75,9 @@ public class CashOrderAdapter extends AsfsAdapter {
         message.setCurrencyType(cashOrder.getCurrencyType());
         message.setWorkPlaceUId(cashOrder.getWorkPlaceUId());
         message.setOperationType(operTypeLabel(cashOrder.getOperationTypeCode()));
-        message.setRepData(repData(cashOrder));
-        message.setAdditionalInfo(additionalInfo(cashOrder));
+        message.setRepData(repData(cashOrder.getRepData()));
+        message.setAdditionalInfo(additionalInfo(cashOrder.getSubbranch()));
+
     }
 
     private static void map(SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage message, CashOrder cashOrder){
@@ -99,7 +87,7 @@ public class CashOrderAdapter extends AsfsAdapter {
         cashOrder.setCashOrderId(message.getKO1().getCashOrderId());
         cashOrder.setCashOrderINum(message.getKO1().getCashOrderINum());
         cashOrder.setCashOrderStatus(cashOrderStatusTypeCode(message.getKO1().getCashOrderStatus()));
-        cashOrder.setCashOrderTypeCode(cashOrderTypeCode(message.getKO1().getCashOrderType()));
+        cashOrder.setCashOrderType(cashOrderTypeCode(message.getKO1().getCashOrderType()));
         cashOrder.setCashSymbols(new ArrayList<CashSymbol>());
         if (message.getKO1().getCashSymbols() != null) {
             for (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem cashSymbolItem :
@@ -158,7 +146,7 @@ public class CashOrderAdapter extends AsfsAdapter {
         cashOrder.setResponseMsg(message.getResponseMsg());
         cashOrder.setCashOrderINum(message.getCashOrderINum());
         cashOrder.setCashOrderStatus(cashOrderStatusTypeCode(message.getCashOrderStatus()));
-        cashOrder.setCashOrderTypeCode(cashOrderTypeCode(message.getCashOrderType()));
+        cashOrder.setCashOrderType(cashOrderTypeCode(message.getCashOrderType()));
     }
 
     public static SrvCreateCashOrderRq requestCreateOrder(CashOrder cashOrder){
@@ -178,11 +166,11 @@ public class CashOrderAdapter extends AsfsAdapter {
         return request;
     }
 
-    public static SrvGetWorkPlaceInfoRq requestGetWorkPlace(Workplace workPlaceId){
+    public static SrvGetWorkPlaceInfoRq requestGetWorkPlace(String workPlaceId){
         SrvGetWorkPlaceInfoRq request = new SrvGetWorkPlaceInfoRq();
         request.setHeaderInfo(headerInfo());
         request.setSrvGetWorkPlaceInfoRqMessage(new SrvGetWorkPlaceInfoRq.SrvGetWorkPlaceInfoRqMessage());
-        request.getSrvGetWorkPlaceInfoRqMessage().setWorkPlaceUId(workPlaceId.getId());
+        request.getSrvGetWorkPlaceInfoRqMessage().setWorkPlaceUId(workPlaceId);
         return request;
     }
 
@@ -193,6 +181,13 @@ public class CashOrderAdapter extends AsfsAdapter {
         return cashOrder;
     }
 
+    public static CashOrder convert(SrvUpdStCashOrderRs response){
+        CashOrder cashOrder = new CashOrder();
+        map(response.getHeaderInfo(), cashOrder);
+        map(response.getSrvUpdCashOrderRsMessage(), cashOrder);
+        return cashOrder;
+    }
+
     public static Workplace convert(SrvGetWorkPlaceInfoRs response){
         Workplace workplace = new Workplace();
         map(response.getHeaderInfo(), workplace);
@@ -200,12 +195,7 @@ public class CashOrderAdapter extends AsfsAdapter {
         return workplace;
     }
 
-    public static CashOrder convert(SrvUpdStCashOrderRs response){
-        CashOrder cashOrder = new CashOrder();
-        map(response.getHeaderInfo(), cashOrder);
-        map(response.getSrvUpdCashOrderRsMessage(), cashOrder);
-        return cashOrder;
-    }
+
 
 
 }

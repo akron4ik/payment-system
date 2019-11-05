@@ -1,25 +1,8 @@
 package ru.philit.ufs.model.cache.hazelcast;
 
 import static java.util.Collections.singletonList;
-import static ru.philit.ufs.model.entity.request.RequestType.ACCOUNT_20202;
-import static ru.philit.ufs.model.entity.request.RequestType.ACCOUNT_BY_CARD_NUMBER;
-import static ru.philit.ufs.model.entity.request.RequestType.ACCOUNT_RESIDUES_BY_ID;
-import static ru.philit.ufs.model.entity.request.RequestType.ADD_OPER_TASK;
-import static ru.philit.ufs.model.entity.request.RequestType.CARD_INDEX_ELEMENTS_BY_ACCOUNT;
-import static ru.philit.ufs.model.entity.request.RequestType.CASH_SYMBOL;
-import static ru.philit.ufs.model.entity.request.RequestType.CHECK_OPER_PACKAGE;
-import static ru.philit.ufs.model.entity.request.RequestType.COUNT_COMMISSION;
-import static ru.philit.ufs.model.entity.request.RequestType.CREATE_OPER_PACKAGE;
-import static ru.philit.ufs.model.entity.request.RequestType.GET_OPER_TASKS;
-import static ru.philit.ufs.model.entity.request.RequestType.GET_OVN;
-import static ru.philit.ufs.model.entity.request.RequestType.GET_OVN_LIST;
-import static ru.philit.ufs.model.entity.request.RequestType.GET_REPRESENTATIVE_BY_CARD;
-import static ru.philit.ufs.model.entity.request.RequestType.LEGAL_ENTITY_BY_ACCOUNT;
-import static ru.philit.ufs.model.entity.request.RequestType.OPERATOR_BY_USER;
-import static ru.philit.ufs.model.entity.request.RequestType.OPER_TYPES_BY_ROLE;
-import static ru.philit.ufs.model.entity.request.RequestType.SEARCH_REPRESENTATIVE;
-import static ru.philit.ufs.model.entity.request.RequestType.SEIZURES_BY_ACCOUNT;
-import static ru.philit.ufs.model.entity.request.RequestType.UPDATE_OPER_TASK;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CHECK_OVER_LIMIT_MAP;
+import static ru.philit.ufs.model.entity.request.RequestType.*;
 
 import com.google.common.collect.Iterables;
 import com.hazelcast.core.IMap;
@@ -56,6 +39,7 @@ import ru.philit.ufs.web.exception.UserNotFoundException;
 public class HazelcastCacheImpl
     implements AccountCache, AnnouncementCache, OperationCache, OperationTypeCache,
     RepresentativeCache, UserCache {
+
 
   private final HazelcastBeClient client;
   private final AuditService auditService;
@@ -265,6 +249,31 @@ public class HazelcastCacheImpl
     );
   }
 
+  public CashOrder createCashOrder(CashOrder cashOrder, ClientInfo clientInfo){
+    return requestData(
+            cashOrder, client.getCashOrderMap(), CREATE_CASHORDER, clientInfo
+    );
+  }
+
+  public CashOrder updCashOrder(CashOrder cashOrder, ClientInfo clientInfo){
+    return requestData(
+            cashOrder, client.getCashOrderMap(), UPDATE_CASHORDER_STATUS, clientInfo
+    );
+  }
+
+  @Override
+  public Workplace getWorkplace(String workPlaceId, ClientInfo clientInfo){
+    return requestData(
+      workPlaceId, client.getWorkplaceMap(), GET_WORKPLACE_INFO, clientInfo
+    );
+  }
+
+  @Override
+  public Boolean checkOverLimit(CheckOverLimitRequest request, ClientInfo clientInfo){
+    ExternalEntityContainer<Boolean> container = requestData(request, client.getCheckOverLimitMap(), CHECK_OVER_LIMIT, clientInfo);
+    return container.getData();
+  }
+
   private <K extends Serializable, V> V requestData(
       K key, IMap<LocalKey<K>, V> cacheMap, String type, ClientInfo clientInfo
   ) {
@@ -296,35 +305,4 @@ public class HazelcastCacheImpl
     return (list != null) ? Iterables.getFirst(list, null) : null;
   }
 
-  @Override
-  public Workplace getWorkplace(String workplaceId) {
-    Workplace workplace = new Workplace();
-
-    workplace.setType(WorkplaceType.UWP);
-    workplace.setCashboxOnBoard(true);
-    workplace.setSubbranchCode("1385930100");
-    workplace.setCashboxDeviceId("530690F50B9E49A6B3EDAE2CF6B7CC4F");
-    workplace.setCashboxDeviceType("CashierPro2520-sx");
-    workplace.setCurrencyType("RUB");
-    workplace.setAmount(new BigDecimal("100000.0"));
-    workplace.setLimit(new BigDecimal("500000.0"));
-    workplace.setCategoryLimits(new ArrayList<OperationTypeLimit>());
-
-    OperationTypeLimit categoryLimit1 = new OperationTypeLimit();
-    categoryLimit1.setCategoryId("0");
-    categoryLimit1.setLimit(new BigDecimal("50000.0"));
-    workplace.getCategoryLimits().add(categoryLimit1);
-
-    OperationTypeLimit categoryLimit2 = new OperationTypeLimit();
-    categoryLimit2.setCategoryId("1");
-    categoryLimit2.setLimit(new BigDecimal("15000.0"));
-    workplace.getCategoryLimits().add(categoryLimit2);
-
-    return workplace;
-  }
-
-  @Override
-  public boolean checkOverLimit(BigDecimal amount) {
-    return amount.compareTo(MAX_LIMIT) <= 0;
-  }
 }

@@ -131,14 +131,14 @@ public class AnnouncementProviderTest {
   @Test
   public void testGetCommission() throws Exception {
     // when
-    doNothing().when(userProvider)
+    doNothing().when(provider)
         .checkWorkplaceIncreasedAmount(any(BigDecimal.class), any(ClientInfo.class));
     when(cache.getCommission(any(AccountOperationRequest.class), any(ClientInfo.class)))
         .thenReturn(BigDecimal.ONE);
     provider.getCommission(ACCOUNT_ID, AMOUNT, TYPE_CODE, CLIENT_INFO);
 
     // verify
-    verify(userProvider, times(1))
+    verify(provider, times(1))
         .checkWorkplaceIncreasedAmount(any(BigDecimal.class), any(ClientInfo.class));
     verify(cache, times(1))
         .getCommission(any(AccountOperationRequest.class), any(ClientInfo.class));

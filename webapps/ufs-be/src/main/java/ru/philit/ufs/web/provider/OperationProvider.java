@@ -8,13 +8,7 @@ import org.springframework.util.StringUtils;
 import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.cache.OperationCache;
 import ru.philit.ufs.model.entity.account.Representative;
-import ru.philit.ufs.model.entity.oper.Operation;
-import ru.philit.ufs.model.entity.oper.OperationPackage;
-import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
-import ru.philit.ufs.model.entity.oper.OperationTask;
-import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
-import ru.philit.ufs.model.entity.oper.OperationTaskStatus;
-import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+import ru.philit.ufs.model.entity.oper.*;
 import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.web.exception.InvalidDataException;
 
@@ -49,6 +43,8 @@ public class OperationProvider {
    */
   public OperationPackage addActiveDepositTask(String workplaceId,
       OperationTaskCardDeposit depositTask, ClientInfo clientInfo) {
+    CashOrder cashOrder = mockCache.getCashOrder();
+    cache.createCashOrder(cashOrder, clientInfo);
     return addDepositTask(workplaceId, depositTask, OperationTaskStatus.ACTIVE, clientInfo);
   }
 
@@ -62,6 +58,8 @@ public class OperationProvider {
    */
   public OperationPackage addForwardedDepositTask(String workplaceId,
       OperationTaskCardDeposit depositTask, ClientInfo clientInfo) {
+    CashOrder cashOrder = mockCache.getCashOrder();
+    cache.createCashOrder(cashOrder, clientInfo);
     return addDepositTask(workplaceId, depositTask, OperationTaskStatus.FORWARDED, clientInfo);
   }
 
@@ -73,6 +71,9 @@ public class OperationProvider {
     if (depositTask == null) {
       throw new InvalidDataException("Отсутствуют данные для взноса на корпоративную карту");
     }
+    CashOrder cashOrder = mockCache.getCashOrder();
+    cache.createCashOrder(cashOrder, clientInfo);
+
     OperationPackageRequest packageRequest = new OperationPackageRequest();
 
     packageRequest.setWorkPlaceUid(workplaceId);
@@ -186,6 +187,9 @@ public class OperationProvider {
     operation = mockCache.commitOperation(operation);
     cache.addOperation(taskId, operation);
 
+    CashOrder cashOrder = mockCache.getCashOrder();
+    cashOrder.setCashOrderStatus(CashOrderStatus.COMMITTED);
+    cache.updCashOrder(cashOrder, clientInfo);
     return operation;
   }
 

@@ -134,9 +134,8 @@ public class HazelcastServer {
   @Getter private IMap<LocalKey<CashSymbolRequest>, List<CashSymbol>> cashSymbolsMap;
 
   @Getter private IMap<LocalKey<String>, Workplace> workplaceMap;
-  @Getter private IMap<LocalKey<String>, CashOrder> createCashOrderMap;
-  @Getter private IMap<LocalKey<String>, CashOrder> updateCashOrderStatusMap;
-  @Getter private IMap<LocalKey<String>, CheckOverLimit> checkOverLimitMap;
+  @Getter private IMap<LocalKey<CashOrder>, CashOrder> cashOrderMap;
+  @Getter private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
 
 
   /**
@@ -214,7 +213,7 @@ public class HazelcastServer {
       config.addMapConfig(mapConfig);
     }
 
-    for (String mapName : new String[]{CHECK_OVER_LIMIT_MAP, CREATE_CASH_ORDER, GET_WORKPLACE, UPDATE_CASHORDER_STATUS}) {
+    for (String mapName : new String[]{CHECK_OVER_LIMIT_MAP, CASH_ORDER_MAP, GET_WORKPLACE}) {
       MapConfig mapConfig = new MapConfig();
       mapConfig.setName(mapName);
       mapConfig.setTimeToLiveSeconds(3600);
@@ -263,8 +262,7 @@ public class HazelcastServer {
     cashSymbolsMap = instance.getMap(CASH_SYMBOLS_MAP);
 
     workplaceMap = instance.getMap(GET_WORKPLACE);
-    createCashOrderMap = instance.getMap(CREATE_CASH_ORDER);
-    updateCashOrderStatusMap = instance.getMap(UPDATE_CASHORDER_STATUS);
+    cashOrderMap = instance.getMap(CASH_ORDER_MAP);
     checkOverLimitMap = instance.getMap(CHECK_OVER_LIMIT_MAP);
 
 

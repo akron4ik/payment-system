@@ -9,8 +9,7 @@ import ru.philit.ufs.model.entity.account.Card;
 import ru.philit.ufs.model.entity.account.CardNetworkCode;
 import ru.philit.ufs.model.entity.account.CardType;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
-import ru.philit.ufs.model.entity.oper.Operation;
-import ru.philit.ufs.model.entity.oper.OperationStatus;
+import ru.philit.ufs.model.entity.oper.*;
 import ru.philit.ufs.model.entity.user.User;
 import ru.philit.ufs.util.UuidUtils;
 
@@ -21,6 +20,10 @@ public class MockCacheImpl implements MockCache {
   private static final String LOGIN_IVANOV = "Ivanov_II";
   private static final String LOGIN_SIDOROV = "Sidorov_SS";
   private static final String LOGIN_SVETLOVA = "Svetlova_SS";
+  /*private static final CashOrder CASH_ORDER = new CashOrder();
+  static {
+    CASH_ORDER.setCashOrderId("12345");
+  }*/
 
   @Override
   public User getUser(String userLogin, String password) {
@@ -81,6 +84,15 @@ public class MockCacheImpl implements MockCache {
   }
 
   @Override
+  public CashOrder getCashOrder() {
+    CashOrder cashOrder = new CashOrder();
+    cashOrder.setCashOrderId("123456");
+    cashOrder.setCashOrderType(CashOrderType.KO_1);
+    cashOrder.setCashOrderStatus(CashOrderStatus.CREATED);
+    return cashOrder;
+  }
+
+  @Override
   public Operation createOperation(String workplaceId, String operationTypeCode) {
     Operation operation = new Operation();
 
@@ -89,6 +101,7 @@ public class MockCacheImpl implements MockCache {
     operation.setStatus(OperationStatus.NEW);
     operation.setTypeCode(OperationTypeCode.getByCode(operationTypeCode));
     operation.setCreatedDate(new Date());
+    operation.setCashOrderId(getCashOrder().getCashOrderId());
 
     return operation;
   }

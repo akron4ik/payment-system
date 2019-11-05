@@ -89,7 +89,7 @@ public class UserControllerTest extends RestControllerTest {
     verifyNoMoreInteractions(provider);
   }
 
-  @Test
+  /*@Test
   public void testGetWorkplace() throws Exception {
     when(provider.getWorkplace(any(ClientInfo.class))).thenReturn(new Workplace());
 
@@ -101,5 +101,5 @@ public class UserControllerTest extends RestControllerTest {
 
     verify(provider, times(1)).getWorkplace(any(ClientInfo.class));
     verifyNoMoreInteractions(provider);
-  }
+  }*/
 }

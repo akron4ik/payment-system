@@ -27,13 +27,9 @@ import ru.philit.ufs.model.entity.account.AccountOperationRequest;
 import ru.philit.ufs.model.entity.account.RepresentativeRequest;
 import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.common.ExternalEntityRequest;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
-import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
-import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
-import ru.philit.ufs.model.entity.oper.OperationPackage;
-import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
-import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+import ru.philit.ufs.model.entity.oper.*;
 import ru.philit.ufs.model.entity.request.RequestType;
+import ru.philit.ufs.model.entity.user.Workplace;
 
 public class EsbServiceImplTest {
 
@@ -128,6 +124,14 @@ public class EsbServiceImplTest {
     request.setSessionId(TestData.SESSION_ID);
     request.setRequestData("000");
     int requestCount = 0;
+
+
+    //when
+    request.setEntityType(RequestType.GET_WORKPLACE_INFO);
+    esbService.sendRequest(request);
+    requestCount++;
+    //then
+    Assert.assertEquals(putRequests.size(), requestCount);
 
     // when
     request.setEntityType(RequestType.ACCOUNT_BY_ID);
@@ -317,6 +321,36 @@ public class EsbServiceImplTest {
     // then
     Assert.assertEquals(putRequests.size(), requestCount);
 
+    // given
+    request.setRequestData(new CashOrder());
+
+    // when
+    request.setEntityType(RequestType.CREATE_CASHORDER);
+    esbService.sendRequest(request);
+    requestCount++;
+    // then
+    Assert.assertEquals(putRequests.size(), requestCount);
+
+    // when
+    request.setEntityType(RequestType.UPDATE_CASHORDER_STATUS);
+    esbService.sendRequest(request);
+    requestCount++;
+
+    //request.setRequestData(new Workplace());
+
+    /*request.setEntityType(RequestType.GET_WORKPLACE_INFO);
+    esbService.sendRequest(request);
+    requestCount++;*/
+    // then
+    //Assert.assertEquals(putRequests.size(), requestCount);
+
+    request.setRequestData(new CheckOverLimitRequest());
+
+    // when
+    request.setEntityType(RequestType.CHECK_OVER_LIMIT);
+    esbService.sendRequest(request);
+    requestCount++;
+
     // when
     request.setEntityType(WRONG_REQUEST_TYPE);
     esbService.sendRequest(request);
@@ -347,7 +381,9 @@ public class EsbServiceImplTest {
         RequestType.GET_REPRESENTATIVE_BY_CARD, RequestType.LEGAL_ENTITY_BY_ACCOUNT,
         RequestType.OPER_TYPES_BY_ROLE, RequestType.OPERATOR_BY_USER,
         RequestType.SEARCH_REPRESENTATIVE, RequestType.SEIZURES_BY_ACCOUNT,
-        RequestType.UPDATE_OPER_TASK, RequestType.UPDATE_OVN};
+        RequestType.UPDATE_OPER_TASK, RequestType.UPDATE_OVN,
+        RequestType.CHECK_OVER_LIMIT, RequestType.CREATE_CASHORDER,
+        RequestType.UPDATE_CASHORDER_STATUS, RequestType.GET_WORKPLACE_INFO};
     for (String requestType : requestTypes) {
       // when
       request.setEntityType(requestType);

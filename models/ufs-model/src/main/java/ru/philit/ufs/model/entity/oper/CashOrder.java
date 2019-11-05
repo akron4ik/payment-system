@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.philit.ufs.model.entity.account.IdentityDocument;
 import ru.philit.ufs.model.entity.account.Representative;
 import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
@@ -26,8 +25,8 @@ public class CashOrder extends ExternalEntity implements Serializable {
 
   private String cashOrderId;
   private String cashOrderINum;
-  private CashOrderStatusTypeCode cashOrderStatus;
-  private CashOrderTypeCode cashOrderTypeCode;
+  private CashOrderStatus cashOrderStatus;
+  private CashOrderType cashOrderType;
   private Date createdDttm;
   private OperationTypeCode operationTypeCode;
   private BigDecimal amount;
@@ -53,17 +52,6 @@ public class CashOrder extends ExternalEntity implements Serializable {
   private boolean clientTypeFk;
   private String operationId;
   private Representative repData;
-  /*private String repFio;*/
   private String legalEntityShortName;
-
-  /*
-  private Date dateOfBirth;
-  private String address;
-  private String inn;
-  private String placeOfBirth;
-  private boolean resident;
-  private List<IdentityDocument> identityDocument;
-  private String repId;
-  */
 
 }

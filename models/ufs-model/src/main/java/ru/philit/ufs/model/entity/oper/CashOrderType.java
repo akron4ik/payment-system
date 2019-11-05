@@ -2,35 +2,34 @@ package ru.philit.ufs.model.entity.oper;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
-import ru.philit.ufs.model.entity.common.ExternalEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public enum CashOrderTypeCode {
+public enum CashOrderType {
 
     KO_1("KO1", "КО1"),
     KO_2("KO2", "КО2");
 
-    private static final ImmutableMap<String, CashOrderTypeCode> CODES_MAP;
+    private static final ImmutableMap<String, CashOrderType> CODES_MAP;
 
     static {
-        Map<String, CashOrderTypeCode> mapCodes = new HashMap<>();
-        for (CashOrderTypeCode item : values()) {
+        Map<String, CashOrderType> mapCodes = new HashMap<>();
+        for (CashOrderType item : values()) {
             mapCodes.put(item.code(), item);
         }
         CODES_MAP = ImmutableMap.copyOf(mapCodes);
     }
 
-    public static CashOrderTypeCode getByCode(String code) {
+    public static CashOrderType getByCode(String code) {
         return CODES_MAP.get(code);
     }
 
     private final String code;
     private final String value;
 
-    CashOrderTypeCode(String code, String value) {
+    CashOrderType(String code, String value) {
         this.code = code;
         this.value = value;
     }

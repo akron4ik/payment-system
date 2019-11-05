@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
+import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.CashSymbol;
-import ru.philit.ufs.web.dto.AnnouncementDto;
-import ru.philit.ufs.web.dto.CashSymbolDto;
+import ru.philit.ufs.model.entity.oper.OperationTypeLimit;
+import ru.philit.ufs.model.entity.user.Workplace;
+import ru.philit.ufs.web.dto.*;
 import ru.philit.ufs.web.mapping.AnnouncementMapper;
 
 @Component
@@ -85,6 +87,53 @@ public class AnnouncementMapperImpl extends CommonMapperImpl implements Announce
     for (CashSymbol symbol : in) {
       out.add(asDto(symbol));
     }
+    return out;
+  }
+
+  @Override
+  public WorkplaceDto asDto(Workplace in) {
+    if (in == null) {
+      return null;
+    }
+    WorkplaceDto out = new WorkplaceDto();
+
+    out.setSubbranchCode(in.getSubbranchCode());
+    out.setCashboxDeviceId(in.getCashboxDeviceId());
+    out.setCashboxDeviceType(in.getCashboxDeviceType());
+    out.setCurrencyType(in.getCurrencyType());
+    out.setAmount(asDto(in.getAmount()));
+    out.setLimit(asDto(in.getLimit()));
+    out.setCategoryLimits(asLimitDto(in.getCategoryLimits()));
+
+    return out;
+  }
+
+  public CashOrderDto asDto(CashOrder in){
+    if (in == null) {
+      return null;
+    }
+    CashOrderDto cashOrderDto = new CashOrderDto();
+    return cashOrderDto;
+  }
+
+  private List<OperationTypeLimitDto> asLimitDto(List<OperationTypeLimit> in) {
+    if (in == null) {
+      return Collections.emptyList();
+    }
+    List<OperationTypeLimitDto> out = new ArrayList<>();
+
+    for (OperationTypeLimit typeLimit : in) {
+      out.add(asDto(typeLimit));
+    }
+    return out;
+  }
+
+  private OperationTypeLimitDto asDto(OperationTypeLimit in) {
+    OperationTypeLimitDto out = new OperationTypeLimitDto();
+
+    out.setCategoryId(in.getCategoryId());
+    out.setLimit(asDto(in.getLimit()));
+
     return out;
   }
 }

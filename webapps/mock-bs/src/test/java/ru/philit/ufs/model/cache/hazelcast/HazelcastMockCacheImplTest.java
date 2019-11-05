@@ -3,6 +3,8 @@ package ru.philit.ufs.model.cache.hazelcast;
 import static org.mockito.Mockito.when;
 
 import com.hazelcast.core.IMap;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
@@ -10,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.esb.eks.SrvGetTaskClOperPkgRs.SrvGetTaskClOperPkgRsMessage;
 import ru.philit.ufs.model.entity.oper.OperationPackageInfo;
@@ -38,6 +41,8 @@ public class HazelcastMockCacheImplTest {
   private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId = new MockIMap<>();
+  private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders = new MockIMap<>();
+  private IMap<String, BigDecimal> checkOverLimit = new MockIMap<>();
   private IMap<Long, PkgTaskStatusType> taskStatuses = new MockIMap<>();
   private IMap<Long, OperationPackageInfo> packageById = new MockIMap<>();
   private IMap<String, Long> packageIdByInn = new MockIMap<>();
@@ -62,6 +67,8 @@ public class HazelcastMockCacheImplTest {
     when(hazelcastMockServer.getTaskStatuses()).thenReturn(taskStatuses);
     when(hazelcastMockServer.getPackageById()).thenReturn(packageById);
     when(hazelcastMockServer.getPackageIdByInn()).thenReturn(packageIdByInn);
+    when(hazelcastMockServer.getCashOrders()).thenReturn(cashOrders);
+    when(hazelcastMockServer.getCheckOverLimit()).thenReturn(checkOverLimit);
   }
 
   @Test
@@ -103,6 +110,11 @@ public class HazelcastMockCacheImplTest {
     Assert.assertTrue(tasksCheckbookIssuingByPackageId.containsKey(1L));
     Assert.assertTrue(tasksCheckbookIssuingByPackageId.get(1L).containsKey(10L));
     Assert.assertTrue(tasksCardDepositByPackageId.get(1L).get(10L).contains(CTRL_TASK_ELEMENT));
+  }
+
+  @Test
+  public void cashOrders() throws Exception {
+
   }
 
   @Test

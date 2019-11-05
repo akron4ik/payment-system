@@ -49,9 +49,9 @@ public final class CollectionNames {
   public static final String CASH_SYMBOLS_MAP = "cashSymbolsMap";
 
   public static final String CHECK_OVER_LIMIT_MAP = "checkLimitMap";
-  public static final String CREATE_CASH_ORDER = "createCashOderMap";
+  public static final String CASH_ORDER_MAP = "cashOderMap";
   public static final String GET_WORKPLACE = "getWorkplaceMap";
-  public static final String UPDATE_CASHORDER_STATUS = "updateCashorderStatusMap";
+
 
   private CollectionNames() {
   }

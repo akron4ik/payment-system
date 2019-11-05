@@ -2,34 +2,32 @@ package ru.philit.ufs.model.entity.oper;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
-import ru.philit.ufs.model.entity.common.ExternalEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum CashOrderStatusTypeCode  {
-    CREATED("Created", "Создан"),
+public enum LimitStatusType {
+    LIMIT_ERROR("Limit error", "Лимит превышен"),
+    LIMIT_PASSED("Limit passed", "Лимит не превышен");
 
-    COMMITTED("Committed", "Поручен");
-
-    private static final ImmutableMap<String, CashOrderStatusTypeCode> CODES_MAP;
+    private static final ImmutableMap<String, LimitStatusType> CODES_MAP;
 
     static {
-        Map<String, CashOrderStatusTypeCode> mapCodes = new HashMap<>();
-        for (CashOrderStatusTypeCode item : values()) {
+        Map<String, LimitStatusType> mapCodes = new HashMap<>();
+        for (LimitStatusType item : values()) {
             mapCodes.put(item.code(), item);
         }
         CODES_MAP = ImmutableMap.copyOf(mapCodes);
     }
 
-    public static CashOrderStatusTypeCode getByCode(String code) {
+    public static LimitStatusType getByCode(String code) {
         return CODES_MAP.get(code);
     }
 
     private final String code;
     private final String value;
 
-    CashOrderStatusTypeCode(String code, String value) {
+    LimitStatusType(String code, String value) {
         this.code = code;
         this.value = value;
     }

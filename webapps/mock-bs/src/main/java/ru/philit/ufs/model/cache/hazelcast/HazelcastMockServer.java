@@ -4,6 +4,8 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.philit.ufs.config.property.HazelcastServerProperties;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.oper.OperationPackageInfo;
 
@@ -43,7 +46,6 @@ public class HazelcastMockServer {
   @Getter private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId;
   @Getter private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId;
   @Getter private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId;
-
   /**
    * Статусы операций, для быстрого доступа.
    */
@@ -56,6 +58,10 @@ public class HazelcastMockServer {
    * Пакеты операций по ИНН клиента.
    */
   @Getter private IMap<String, Long> packageIdByInn;
+
+  @Getter private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders;
+  @Getter private IMap<String, BigDecimal> checkOverLimit;
+
 
   /**
    * Конструктор бина.
@@ -97,6 +103,8 @@ public class HazelcastMockServer {
     tasksAccountDepositByPackageId = instance.getMap("tasksAccountDepositByPackageId");
     tasksAccountWithdrawByPackageId = instance.getMap("tasksAccountWithdrawByPackageId");
     tasksCheckbookIssuingByPackageId = instance.getMap("tasksCheckbookIssuingByPackageId");
+    cashOrders = instance.getMap("cashOrders");
+    checkOverLimit = instance.getMap("checkOverLimit");
     taskStatuses = instance.getMap("taskStatuses");
     packageById = instance.getMap("packageById");
     packageIdByInn = instance.getMap("packageIdByInn");

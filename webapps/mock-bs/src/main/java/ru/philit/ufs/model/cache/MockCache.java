@@ -1,8 +1,12 @@
 package ru.philit.ufs.model.cache;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.esb.eks.SrvGetTaskClOperPkgRs.SrvGetTaskClOperPkgRsMessage;
 import ru.philit.ufs.model.entity.oper.OperationPackageInfo;
@@ -21,6 +25,12 @@ public interface MockCache {
   Long saveTaskAccountWithdraw(Long packageId, Long taskId, Object taskBody);
 
   Long saveTaskCheckbookIssuing(Long packageId, Long taskId, Object taskBody);
+
+  void saveCashOrders(String cashOrderId, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody);
+
+  void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st);
+
+  Boolean checkOverLimit(String userLogin, BigDecimal amount);
 
   void saveTaskStatus(Long taskId, PkgTaskStatusType status);
 

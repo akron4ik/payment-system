@@ -6,28 +6,29 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum LimitStatusTypeCode {
-    LIMIT_ERROR("Limit error", "Лимит превышен"),
-    LIMIT_PASSED("Limit passed", "Лимит не превышен");
+public enum CashOrderStatus {
+    CREATED("Created", "Создан"),
 
-    private static final ImmutableMap<String, LimitStatusTypeCode> CODES_MAP;
+    COMMITTED("Committed", "Поручен");
+
+    private static final ImmutableMap<String, CashOrderStatus> CODES_MAP;
 
     static {
-        Map<String, LimitStatusTypeCode> mapCodes = new HashMap<>();
-        for (LimitStatusTypeCode item : values()) {
+        Map<String, CashOrderStatus> mapCodes = new HashMap<>();
+        for (CashOrderStatus item : values()) {
             mapCodes.put(item.code(), item);
         }
         CODES_MAP = ImmutableMap.copyOf(mapCodes);
     }
 
-    public static LimitStatusTypeCode getByCode(String code) {
+    public static CashOrderStatus getByCode(String code) {
         return CODES_MAP.get(code);
     }
 
     private final String code;
     private final String value;
 
-    LimitStatusTypeCode(String code, String value) {
+    CashOrderStatus(String code, String value) {
         this.code = code;
         this.value = value;
     }

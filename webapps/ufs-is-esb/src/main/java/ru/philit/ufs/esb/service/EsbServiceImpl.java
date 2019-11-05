@@ -3,7 +3,6 @@ package ru.philit.ufs.esb.service;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.resource.spi.work.Work;
 import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,7 +330,7 @@ public class EsbServiceImpl
           break;
 
         case RequestType.CREATE_CASHORDER:
-          if(isCreateCashOrderRequest(entityRequest)) {
+          if(isCashOrderRequest(entityRequest)) {
             SrvCreateCashOrderRq request = CashOrderAdapter.requestCreateOrder((CashOrder) entityRequest.getRequestData());
             isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
             esbClient.sendMessage(asfsConverter.getXml(request));
@@ -339,15 +338,15 @@ public class EsbServiceImpl
           break;
 
         case RequestType.UPDATE_CASHORDER_STATUS:
-          if(isUpdateCashOrderRequest(entityRequest)) {
+          if(isCashOrderRequest(entityRequest)) {
             SrvUpdStCashOrderRq request = CashOrderAdapter.requestUpdCashOrder((CashOrder) entityRequest.getRequestData());
             isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
             esbClient.sendMessage(asfsConverter.getXml(request));
           }
 
         case RequestType.GET_WORKPLACE_INFO:
-          if(isGetWorkplaceRequest(entityRequest)) {
-            SrvGetWorkPlaceInfoRq request = CashOrderAdapter.requestGetWorkPlace((Workplace) entityRequest.getRequestData());
+          if(isRequestDataString(entityRequest)) {
+            SrvGetWorkPlaceInfoRq request = CashOrderAdapter.requestGetWorkPlace((String) entityRequest.getRequestData());
             isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
             esbClient.sendMessage(asfsConverter.getXml(request));
           }
@@ -355,7 +354,7 @@ public class EsbServiceImpl
 
         case RequestType.CHECK_OVER_LIMIT:
           if(isCheckOverLimitRequest(entityRequest)) {
-            SrvCheckOverLimitRq request = CheckOverAdapter.requestCheckLimit((CheckOverLimit) entityRequest.getRequestData());
+            SrvCheckOverLimitRq request = CheckOverAdapter.requestByParams((CheckOverLimitRequest) entityRequest.getRequestData());
             isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
             esbClient.sendMessage(asfsConverter.getXml(request));
           }
@@ -421,12 +420,7 @@ public class EsbServiceImpl
         && entityRequest.getRequestData() instanceof CashSymbolRequest;
   }
 
-  private boolean isCreateCashOrderRequest(ExternalEntityRequest entityRequest) {
-    return entityRequest.getRequestData() != null
-        && entityRequest.getRequestData() instanceof CashOrder;
-  }
-
-  private boolean isUpdateCashOrderRequest(ExternalEntityRequest entityRequest) {
+  private boolean isCashOrderRequest(ExternalEntityRequest entityRequest) {
     return entityRequest.getRequestData() != null
             && entityRequest.getRequestData() instanceof CashOrder;
   }
@@ -438,7 +432,7 @@ public class EsbServiceImpl
 
   private boolean isCheckOverLimitRequest(ExternalEntityRequest entityRequest) {
     return entityRequest.getRequestData() != null
-            && entityRequest.getRequestData() instanceof CheckOverLimit;
+            && entityRequest.getRequestData() instanceof CheckOverLimitRequest;
   }
 
   /**

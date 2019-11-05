@@ -135,4 +135,8 @@ public class ReportProvider {
             new AccountOperationRequest(accountId, amount, operation.getTypeCode()), clientInfo)
         : null;
   }
+
+  /*public  getCashBook(){
+
+  }*/
 }

@@ -67,16 +67,4 @@ public class UserController {
     Operator operator = provider.getOperator(clientInfo);
     return new GetOperatorResp().withSuccess(mapper.asDto(operator));
   }
-
-  /**
-   * Получение данных по рабочему месту и лимитов по операциям.
-   *
-   * @param clientInfo информация о клиенте
-   */
-  @RequestMapping(value = "/workplace", method = RequestMethod.POST)
-  public GetWorkplaceResp getWorkplace(ClientInfo clientInfo) {
-    Workplace workplace = provider.getWorkplace(clientInfo);
-    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
-  }
-
 }

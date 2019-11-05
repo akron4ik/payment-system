@@ -44,7 +44,6 @@ import ru.philit.ufs.model.entity.esb.pprb.SrvGetRepByCardRs;
 import ru.philit.ufs.model.entity.esb.pprb.SrvGetUserOperationsByRoleRs;
 import ru.philit.ufs.model.entity.esb.pprb.SrvSearchRepRs;
 import ru.philit.ufs.model.entity.esb.pprb.SrvUpdCashDepAnmntItemRs;
-import ru.philit.ufs.model.entity.oper.CheckOverLimit;
 
 /**
  * Преобразователь ответов от Мастер-систем.

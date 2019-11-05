@@ -287,17 +287,10 @@ public class ResponseListener
         break;
 
       case RequestType.CREATE_CASHORDER:
-        if(entity instanceof CashOrder){
-          hazelcastServer.getCreateCashOrderMap().put(
-                  new LocalKey<>(request.getSessionId(), (String) request.getRequestData()), (CashOrder) entity);
-
-        }
-        break;
-
       case RequestType.UPDATE_CASHORDER_STATUS:
         if(entity instanceof CashOrder){
-          hazelcastServer.getUpdateCashOrderStatusMap().put(
-                  new LocalKey<>(request.getSessionId(), (String) request.getRequestData()), (CashOrder) entity);
+          hazelcastServer.getCashOrderMap().put(
+                  new LocalKey<>(request.getSessionId(), (CashOrder) request.getRequestData()), (CashOrder) entity);
 
         }
         break;
@@ -310,9 +303,10 @@ public class ResponseListener
         break;
 
       case RequestType.CHECK_OVER_LIMIT:
-        if(entity instanceof CheckOverLimit){
+        if(entity instanceof ExternalEntityContainer
+                && (elementClass1 == null || elementClass1 == Boolean.class)){
           hazelcastServer.getCheckOverLimitMap().put(
-                  new LocalKey<>(request.getSessionId(), (String) request.getRequestData()), (CheckOverLimit) entity);
+                  new LocalKey<>(request.getSessionId(), (CheckOverLimitRequest) request.getRequestData()), (ExternalEntityContainer<Boolean>) entity);
         }
         break;
 

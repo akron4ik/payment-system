@@ -6,14 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import ru.philit.ufs.model.cache.AnnouncementCache;
 import ru.philit.ufs.model.entity.account.AccountOperationRequest;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
 import ru.philit.ufs.model.entity.oper.OvnStatus;
-import ru.philit.ufs.model.entity.user.ClientInfo;
+import ru.philit.ufs.model.entity.user.*;
 import ru.philit.ufs.web.exception.InvalidDataException;
 
 /**
@@ -96,7 +98,7 @@ public class AnnouncementProvider {
     operationRequest.setAmount(new BigDecimal(amount));
     operationRequest.setOperationTypeCode(OperationTypeCode.getByCode(typeCode));
 
-    userProvider.checkWorkplaceIncreasedAmount(operationRequest.getAmount(), clientInfo);
+    //userProvider.checkWorkplaceIncreasedAmount(operationRequest.getAmount(), clientInfo);
 
     return cache.getCommission(operationRequest, clientInfo);
   }
@@ -113,6 +115,47 @@ public class AnnouncementProvider {
       throw new InvalidDataException("Отсутствует запрашиваемый номер УРМ/кассы");
     }
     return cache.getAccount20202(workplaceId, clientInfo);
+  }
+
+  public Workplace getWorkplace(String workplaceId, ClientInfo clientInfo) {
+
+    CheckOverLimitRequest check = new CheckOverLimitRequest();
+    Workplace workplace = cache.getWorkplace(workplaceId, clientInfo);
+    if (workplace == null) {
+      throw new InvalidDataException("Запрашиваемое рабочее место не найдено в системе");
+    }
+    if ((workplace.getType() == WorkplaceType.UWP) && !workplace.isCashboxOnBoard()) {
+      throw new InvalidDataException("Данное рабочее место не оборудовано кассовым модулем");
+    }
+    if (!ObjectUtils.nullSafeEquals(workplace.getCurrencyType(), "RUB")) {
+      throw new InvalidDataException(
+          "Кассовый модуль может быть использован только для операций в рублях");
+    }
+    if (workplace.getAmount() == null) {
+      throw new InvalidDataException("Отсутствует общий остаток по кассе");
+    }
+    if (cache.checkOverLimit(check, clientInfo)) {
+      throw new InvalidDataException("Превышен лимит общего остатка по кассе");
+    }
+    return workplace;
+  }
+
+   public void checkWorkplaceIncreasedAmount(BigDecimal amount, ClientInfo clientInfo) {
+    Operator operator = userProvider.getOperator(clientInfo);
+    CheckOverLimitRequest check = new CheckOverLimitRequest();
+    check.setAmount(amount);
+    check.setUserLogin(userProvider.getUser(clientInfo.getSessionId()).getLogin());
+
+    Workplace workplace = cache.getWorkplace(operator.getWorkplaceId(), clientInfo);
+    if (workplace == null) {
+      throw new InvalidDataException("Запрашиваемое рабочее место не найдено в системе");
+    }
+    if (workplace.getAmount() == null) {
+      throw new InvalidDataException("Отсутствует общий остаток по кассе");
+    }
+    if (cache.checkOverLimit(check, clientInfo)) {
+      throw new InvalidDataException("Превышен лимит общего остатка по кассе");
+    }
   }
 
 }

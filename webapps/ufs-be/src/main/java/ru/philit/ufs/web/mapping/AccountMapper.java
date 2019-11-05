@@ -7,12 +7,8 @@ import ru.philit.ufs.model.entity.account.LegalEntity;
 import ru.philit.ufs.model.entity.account.Seizure;
 import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex1;
 import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex2;
-import ru.philit.ufs.web.dto.AccountDto;
-import ru.philit.ufs.web.dto.AccountResiduesDto;
-import ru.philit.ufs.web.dto.LegalEntityDto;
-import ru.philit.ufs.web.dto.PaymentOrderCardIndex1Dto;
-import ru.philit.ufs.web.dto.PaymentOrderCardIndex2Dto;
-import ru.philit.ufs.web.dto.SeizureDto;
+import ru.philit.ufs.model.entity.user.Workplace;
+import ru.philit.ufs.web.dto.*;
 
 /**
  * Конвертер для счетов.
