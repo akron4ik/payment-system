@@ -7,11 +7,13 @@ import com.hazelcast.core.IMap;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.esb.eks.SrvGetTaskClOperPkgRs.SrvGetTaskClOperPkgRsMessage;
@@ -42,7 +44,7 @@ public class HazelcastMockCacheImplTest {
   private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId = new MockIMap<>();
   private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders = new MockIMap<>();
-  private IMap<String, BigDecimal> checkOverLimit = new MockIMap<>();
+  //private IMap<String, BigDecimal> checkOverLimit = new MockIMap<>();
   private IMap<Long, PkgTaskStatusType> taskStatuses = new MockIMap<>();
   private IMap<Long, OperationPackageInfo> packageById = new MockIMap<>();
   private IMap<String, Long> packageIdByInn = new MockIMap<>();
@@ -68,7 +70,7 @@ public class HazelcastMockCacheImplTest {
     when(hazelcastMockServer.getPackageById()).thenReturn(packageById);
     when(hazelcastMockServer.getPackageIdByInn()).thenReturn(packageIdByInn);
     when(hazelcastMockServer.getCashOrders()).thenReturn(cashOrders);
-    when(hazelcastMockServer.getCheckOverLimit()).thenReturn(checkOverLimit);
+    //when(hazelcastMockServer.getCheckOverLimit()).thenReturn(checkOverLimit);
   }
 
   @Test
@@ -114,7 +116,37 @@ public class HazelcastMockCacheImplTest {
 
   @Test
   public void cashOrders() throws Exception {
+    //given
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    String cashOrderId = "12345";
+    //when
+    mockCache.saveCashOrders(cashOrderId, ko1);
+    //then
+    Assert.assertTrue(cashOrders.containsKey(cashOrderId));
+  }
 
+  @Test
+  public void updCashOrderSt() {
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    ko1.setCashOrderStatus(CashOrderStatusType.CREATED);
+    String cashOrderId = "12345";
+    mockCache.saveCashOrders(cashOrderId, ko1);
+    Assert.assertEquals(cashOrders.get(cashOrderId).getCashOrderStatus(),
+        CashOrderStatusType.CREATED);
+    mockCache.updateCashOrdersSt(cashOrderId, CashOrderStatusType.COMMITTED);
+    Assert.assertEquals(cashOrders.get(cashOrderId).getCashOrderStatus(),
+        CashOrderStatusType.COMMITTED);
+  }
+
+  @Test
+  public void checkOverLimit() {
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    ko1.setCashOrderStatus(CashOrderStatusType.CREATED);
+    ko1.setAmount(BigDecimal.valueOf(1000));
+    ko1.setAccountId("1234567");
+
+    boolean flag = mockCache.checkOverLimit(ko1.getAccountId());
+    Assert.assertTrue(flag);
   }
 
   @Test

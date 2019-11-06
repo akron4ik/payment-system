@@ -110,7 +110,7 @@ public class HazelcastBeClient {
   @Getter
   private IMap<LocalKey<String>, Workplace> workplaceMap;
   @Getter
-  private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>>  checkOverLimitMap;
+  private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
   @Getter
   private IMap<LocalKey<String>, CashOrder> cashBook;
 
@@ -181,11 +181,11 @@ public class HazelcastBeClient {
   }
 
   /**
-   * Отправляет запрос данных в Мастер-системы.
-   * Ожидает поступления ответа в течение времени ожидания.
+   * Отправляет запрос данных в Мастер-системы. Ожидает поступления ответа в течение времени
+   * ожидания.
    *
    * @param entityType код запроса сущности
-   * @param key локальный id запрашиваемой сущности
+   * @param key        локальный id запрашиваемой сущности
    * @return true is response is got
    */
   public <T extends Serializable> boolean requestExternalEntity(String entityType,

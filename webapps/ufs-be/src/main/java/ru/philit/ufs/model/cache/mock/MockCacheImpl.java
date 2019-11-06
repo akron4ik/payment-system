@@ -20,10 +20,6 @@ public class MockCacheImpl implements MockCache {
   private static final String LOGIN_IVANOV = "Ivanov_II";
   private static final String LOGIN_SIDOROV = "Sidorov_SS";
   private static final String LOGIN_SVETLOVA = "Svetlova_SS";
-  /*private static final CashOrder CASH_ORDER = new CashOrder();
-  static {
-    CASH_ORDER.setCashOrderId("12345");
-  }*/
 
   @Override
   public User getUser(String userLogin, String password) {

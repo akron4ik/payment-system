@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hazelcast.core.IMap;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -88,23 +89,28 @@ public class HazelcastMockCacheImpl implements MockCache {
   }
 
   @Override
-  public void saveCashOrders(String cashOrderId, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody){
+  public void saveCashOrders(String cashOrderId,
+      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody) {
     hazelcastServer.getCashOrders().putIfAbsent(cashOrderId, taskBody);
   }
 
   @Override
-  public void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st){
+  public void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st) {
     hazelcastServer.getCashOrders().get(cashOrderId).setCashOrderStatus(st);
   }
 
   @Override
-  public Boolean checkOverLimit(String userLogin, BigDecimal amount){
-   if(hazelcastServer.getCheckOverLimit().get(userLogin) == null){
-     hazelcastServer.getCheckOverLimit().put(userLogin, amount);
-   }else{
-     hazelcastServer.getCheckOverLimit().computeIfPresent(userLogin, (k,v) -> v.add(amount));
-   }
-   return hazelcastServer.getCheckOverLimit().get(userLogin).compareTo(MAX_LIMIT) <= 0;
+  public Boolean checkOverLimit(String accountId) {
+    int toDay = new Date().getDay();
+    BigDecimal userAmount = BigDecimal.valueOf(0);
+
+    for (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko : hazelcastServer.getCashOrders()
+        .values()) {
+      if (ko.getAccountId().equals(accountId) && toDay == ko.getCreatedDttm().getDay()) {
+        userAmount.add(ko.getAmount());
+      }
+    }
+    return userAmount.compareTo(MAX_LIMIT) <= 0;
 
   }
 
@@ -113,7 +119,7 @@ public class HazelcastMockCacheImpl implements MockCache {
     if (!collection.containsKey(packageId)) {
       collection.put(packageId, new HashMap<Long, String>());
     }
-    Long realTaskId = taskId == null ? (long)(Math.random() * 1000000) : taskId;
+    Long realTaskId = taskId == null ? (long) (Math.random() * 1000000) : taskId;
     try {
       final Map<Long, String> taskMap = collection.get(packageId);
       String taskJson = jsonMapper.writeValueAsString(taskBody);
@@ -154,7 +160,7 @@ public class HazelcastMockCacheImpl implements MockCache {
   @Override
   public synchronized OperationPackageInfo createPackage(String inn, String workplaceId,
       String userLogin) {
-    Long packageId = (long)(Math.random() * 10000);
+    Long packageId = (long) (Math.random() * 10000);
     OperationPackageInfo packageInfo = new OperationPackageInfo();
     packageInfo.setId(packageId);
     packageInfo.setInn(inn);
@@ -174,8 +180,8 @@ public class HazelcastMockCacheImpl implements MockCache {
 
   @Override
   public Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>>
-        searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
-        Date toDate, List<Long> taskIds) {
+  searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
+      Date toDate, List<Long> taskIds) {
     Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>> targetLists =
         new HashMap<>();
     Collection<Long> packageIds = (packageId != null)

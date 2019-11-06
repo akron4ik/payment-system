@@ -249,28 +249,31 @@ public class HazelcastCacheImpl
     );
   }
 
-  public CashOrder createCashOrder(CashOrder cashOrder, ClientInfo clientInfo){
+  @Override
+  public CashOrder createCashOrder(CashOrder cashOrder, ClientInfo clientInfo) {
     return requestData(
-            cashOrder, client.getCashOrderMap(), CREATE_CASHORDER, clientInfo
-    );
-  }
-
-  public CashOrder updCashOrder(CashOrder cashOrder, ClientInfo clientInfo){
-    return requestData(
-            cashOrder, client.getCashOrderMap(), UPDATE_CASHORDER_STATUS, clientInfo
+        cashOrder, client.getCashOrderMap(), CREATE_CASHORDER, clientInfo
     );
   }
 
   @Override
-  public Workplace getWorkplace(String workPlaceId, ClientInfo clientInfo){
+  public CashOrder updCashOrder(CashOrder cashOrder, ClientInfo clientInfo) {
     return requestData(
-      workPlaceId, client.getWorkplaceMap(), GET_WORKPLACE_INFO, clientInfo
+        cashOrder, client.getCashOrderMap(), UPDATE_CASHORDER_STATUS, clientInfo
     );
   }
 
   @Override
-  public Boolean checkOverLimit(CheckOverLimitRequest request, ClientInfo clientInfo){
-    ExternalEntityContainer<Boolean> container = requestData(request, client.getCheckOverLimitMap(), CHECK_OVER_LIMIT, clientInfo);
+  public Workplace getWorkplace(String workPlaceId, ClientInfo clientInfo) {
+    return requestData(
+        workPlaceId, client.getWorkplaceMap(), GET_WORKPLACE_INFO, clientInfo
+    );
+  }
+
+  @Override
+  public Boolean checkOverLimit(CheckOverLimitRequest request, ClientInfo clientInfo) {
+    ExternalEntityContainer<Boolean> container = requestData(request, client.getCheckOverLimitMap(),
+        CHECK_OVER_LIMIT, clientInfo);
     return container.getData();
   }
 

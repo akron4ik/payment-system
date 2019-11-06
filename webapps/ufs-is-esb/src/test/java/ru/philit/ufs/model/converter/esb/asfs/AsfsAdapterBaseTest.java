@@ -7,36 +7,41 @@ import ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType;
 
 
 public abstract class AsfsAdapterBaseTest extends ConverterBaseTest {
-    /**
-     * Возврфщфет заполненный HeaderInfoType.
-     */
-    public static HeaderInfoType headerInfo(){return AsfsAdapter.headerInfo();}
 
-    /**
-     * Возврфщфет заполненный HeaderInfoType.
-     * @param rqUid заданный requestId
-     */
-    public static ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo(String rqUid) {
-        ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo = AsfsAdapter.headerInfo();
-        headerInfo.setRqUID(rqUid);
-        return headerInfo;
-    }
+  /**
+   * Возврфщфет заполненный HeaderInfoType.
+   */
+  public static HeaderInfoType headerInfo() {
+    return AsfsAdapter.headerInfo();
+  }
 
-    protected static void assertHeaderInfo(ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo) {
-        Assert.assertNotNull(headerInfo);
-        Assert.assertNotNull(headerInfo.getRqUID());
-        Assert.assertNotNull(headerInfo.getRqTm());
-        Assert.assertEquals(headerInfo.getSpName(), AsfsAdapter.REQUEST_SYSTEM);
-        Assert.assertEquals(headerInfo.getSystemId(), AsfsAdapter.RESPONSE_SYSTEM);
-    }
+  /**
+   * Возврфщфет заполненный HeaderInfoType.
+   *
+   * @param rqUid заданный requestId
+   */
+  public static ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo(String rqUid) {
+    ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo = AsfsAdapter.headerInfo();
+    headerInfo.setRqUID(rqUid);
+    return headerInfo;
+  }
 
-    protected static void assertHeaderInfo(ExternalEntity externalEntity) {
-        Assert.assertNotNull(externalEntity.getReceiveDate());
-        Assert.assertNotNull(externalEntity.getRequestUid());
-    }
+  protected static void assertHeaderInfo(
+      ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType headerInfo) {
+    Assert.assertNotNull(headerInfo);
+    Assert.assertNotNull(headerInfo.getRqUID());
+    Assert.assertNotNull(headerInfo.getRqTm());
+    Assert.assertEquals(headerInfo.getSpName(), AsfsAdapter.REQUEST_SYSTEM);
+    Assert.assertEquals(headerInfo.getSystemId(), AsfsAdapter.RESPONSE_SYSTEM);
+  }
 
-    protected static void assertHeaderInfo(ExternalEntity externalEntity, String rqUid) {
-        Assert.assertNotNull(externalEntity.getReceiveDate());
-        Assert.assertEquals(externalEntity.getRequestUid(), rqUid);
-    }
+  protected static void assertHeaderInfo(ExternalEntity externalEntity) {
+    Assert.assertNotNull(externalEntity.getReceiveDate());
+    Assert.assertNotNull(externalEntity.getRequestUid());
+  }
+
+  protected static void assertHeaderInfo(ExternalEntity externalEntity, String rqUid) {
+    Assert.assertNotNull(externalEntity.getReceiveDate());
+    Assert.assertEquals(externalEntity.getRequestUid(), rqUid);
+  }
 }

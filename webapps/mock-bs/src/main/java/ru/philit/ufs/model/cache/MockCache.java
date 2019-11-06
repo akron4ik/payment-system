@@ -26,11 +26,12 @@ public interface MockCache {
 
   Long saveTaskCheckbookIssuing(Long packageId, Long taskId, Object taskBody);
 
-  void saveCashOrders(String cashOrderId, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody);
+  void saveCashOrders(String cashOrderId,
+      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody);
 
   void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st);
 
-  Boolean checkOverLimit(String userLogin, BigDecimal amount);
+  Boolean checkOverLimit(String accountId);
 
   void saveTaskStatus(Long taskId, PkgTaskStatusType status);
 
@@ -41,7 +42,7 @@ public interface MockCache {
   OperationPackageInfo getPackageInfo(Long packageId);
 
   Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>>
-        searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
-        Date toDate, List<Long> taskIds);
+  searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
+      Date toDate, List<Long> taskIds);
 
 }

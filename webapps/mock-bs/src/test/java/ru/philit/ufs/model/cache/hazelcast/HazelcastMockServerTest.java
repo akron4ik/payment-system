@@ -44,7 +44,6 @@ public class HazelcastMockServerTest {
     Assert.assertNotNull(hazelcastMockServer.getPackageById());
     Assert.assertNotNull(hazelcastMockServer.getPackageIdByInn());
     Assert.assertNotNull(hazelcastMockServer.getCashOrders());
-    Assert.assertNotNull(hazelcastMockServer.getCheckOverLimit());
     hazelcastMockServer.destroy();
   }
 

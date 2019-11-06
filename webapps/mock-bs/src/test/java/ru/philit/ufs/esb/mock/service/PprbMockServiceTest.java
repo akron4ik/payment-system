@@ -87,6 +87,7 @@ public class PprbMockServiceTest {
         + "<userLogin>%s</userLogin>"
         + "</SrvGetOperatorInfoByUserRqMessage>"
         + "</SrvGetOperatorInfoByUserRq>";
+    System.out.println(requestMessage);
     assertTrue(service.processMessage(String.format(requestMessage, "Ivanov_II")));
     assertTrue(service.processMessage(String.format(requestMessage, "Sidorov_SS")));
     assertTrue(service.processMessage(String.format(requestMessage, "Svetlova_SS")));

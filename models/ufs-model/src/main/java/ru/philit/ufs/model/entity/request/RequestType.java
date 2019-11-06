@@ -34,6 +34,7 @@ public class RequestType {
   public static final String UPDATE_CASHORDER_STATUS = "UPDATE_CASHORDER_STATUS";
   public static final String CHECK_OVER_LIMIT = "CHECK_OVER_LIMIT";
 
-  private RequestType() {}
+  private RequestType() {
+  }
 
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,26 +42,35 @@ public class HazelcastMockServer {
    * Коллекции кешируемых данных. Содержат объекты operationTask в виде json строки.
    * Ключ коллекции - OperationPackageId, OperationTaskId.
    */
-  @Getter private IMap<Long, Map<Long, String>> tasksCardDepositByPackageId;
-  @Getter private IMap<Long, Map<Long, String>> tasksCardWithdrawByPackageId;
-  @Getter private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId;
-  @Getter private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId;
-  @Getter private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId;
+  @Getter
+  private IMap<Long, Map<Long, String>> tasksCardDepositByPackageId;
+  @Getter
+  private IMap<Long, Map<Long, String>> tasksCardWithdrawByPackageId;
+  @Getter
+  private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId;
+  @Getter
+  private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId;
+  @Getter
+  private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId;
   /**
    * Статусы операций, для быстрого доступа.
    */
-  @Getter private IMap<Long, PkgTaskStatusType> taskStatuses;
+  @Getter
+  private IMap<Long, PkgTaskStatusType> taskStatuses;
   /**
    * Данные пакетов операций.
    */
-  @Getter private IMap<Long, OperationPackageInfo> packageById;
+  @Getter
+  private IMap<Long, OperationPackageInfo> packageById;
   /**
    * Пакеты операций по ИНН клиента.
    */
-  @Getter private IMap<String, Long> packageIdByInn;
+  @Getter
+  private IMap<String, Long> packageIdByInn;
 
-  @Getter private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders;
-  @Getter private IMap<String, BigDecimal> checkOverLimit;
+  @Getter
+  private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders;
+  /*@Getter private IMap<String, BigDecimal> checkOverLimit;*/
 
 
   /**
@@ -104,7 +114,6 @@ public class HazelcastMockServer {
     tasksAccountWithdrawByPackageId = instance.getMap("tasksAccountWithdrawByPackageId");
     tasksCheckbookIssuingByPackageId = instance.getMap("tasksCheckbookIssuingByPackageId");
     cashOrders = instance.getMap("cashOrders");
-    checkOverLimit = instance.getMap("checkOverLimit");
     taskStatuses = instance.getMap("taskStatuses");
     packageById = instance.getMap("packageById");
     packageIdByInn = instance.getMap("packageIdByInn");
