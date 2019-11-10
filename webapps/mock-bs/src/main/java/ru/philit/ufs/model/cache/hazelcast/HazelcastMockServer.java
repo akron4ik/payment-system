@@ -6,6 +6,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -69,8 +70,7 @@ public class HazelcastMockServer {
   private IMap<String, Long> packageIdByInn;
 
   @Getter
-  private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders;
-  /*@Getter private IMap<String, BigDecimal> checkOverLimit;*/
+  private IMap<Date, Map<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>> cashOrders;
 
 
   /**

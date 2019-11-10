@@ -2,6 +2,7 @@ package ru.philit.ufs.esb.mock.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
@@ -116,17 +117,18 @@ public class AsfsMockService extends CommonMockService implements MessageProcess
     cashSymbolItem.setCashSymbolAmount(BigDecimal.valueOf(70500));
     cashSymbols.getCashSymbolItem().add(cashSymbolItem);
     response.getSrvCreateCashOrderRsMessage().getKO1().setCashSymbols(cashSymbols);
-    response.getSrvCreateCashOrderRsMessage().getKO1().setSenderBank("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setSenderBankBIC("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setRecipientBank("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setRecipientBankBIC("");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setSenderBank("123");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setSenderBankBIC("1234");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setRecipientBank("321");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setRecipientBankBIC("4321");
     response.getSrvCreateCashOrderRsMessage().getKO1().setClientTypeFK(true);
-    response.getSrvCreateCashOrderRsMessage().getKO1().setFDestLEName("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setOperatorPosition("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setUserFullName("");
-    response.getSrvCreateCashOrderRsMessage().getKO1().setUserPosition("");
-    mockCache.saveCashOrders(response.getSrvCreateCashOrderRsMessage().getKO1().getCashOrderId(),
-        response.getSrvCreateCashOrderRsMessage().getKO1());
+    response.getSrvCreateCashOrderRsMessage().getKO1().setFDestLEName("000");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setOperatorPosition("555");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setUserFullName("Ivanov Ivan Ivanovich");
+    response.getSrvCreateCashOrderRsMessage().getKO1().setUserPosition("11");
+    Date day = date(response.getSrvCreateCashOrderRsMessage().getKO1().getCreatedDttm());
+    mockCache.createCashOrder(response.getSrvCreateCashOrderRsMessage().getKO1().getCashOrderId(),
+        response.getSrvCreateCashOrderRsMessage().getKO1(), day);
     return response;
   }
 
@@ -134,16 +136,15 @@ public class AsfsMockService extends CommonMockService implements MessageProcess
     SrvUpdStCashOrderRs response = new SrvUpdStCashOrderRs();
     response.setHeaderInfo(copyHeaderInfo(request.getHeaderInfo()));
     response.setSrvUpdCashOrderRsMessage(new SrvUpdStCashOrderRs.SrvUpdCashOrderRsMessage());
-
-    //String cashOrderId = request.getSrvUpdCashOrderRqMessage().getCashOrderId();
-    //CashOrderStatusType statusType = request.getSrvUpdCashOrderRqMessage().getCashOrderStatus();
+    String cashOrderId = request.getSrvUpdCashOrderRqMessage().getCashOrderId();
+    CashOrderStatusType statusType = request.getSrvUpdCashOrderRqMessage().getCashOrderStatus();
     response.getSrvUpdCashOrderRsMessage().setResponseCode("123456789 ");
     response.getSrvUpdCashOrderRsMessage().setResponseMsg("123");
-    response.getSrvUpdCashOrderRsMessage().setCashOrderId(/*cashOrderId*/"12345");
+    response.getSrvUpdCashOrderRsMessage().setCashOrderId(cashOrderId);
     response.getSrvUpdCashOrderRsMessage().setCashOrderINum("1234");
-    response.getSrvUpdCashOrderRsMessage().setCashOrderStatus(CashOrderStatusType.CREATED);
+    response.getSrvUpdCashOrderRsMessage().setCashOrderStatus(statusType);
     response.getSrvUpdCashOrderRsMessage().setCashOrderType(CashOrderType.KO_1);
-    mockCache.updateCashOrdersSt("12345", CashOrderStatusType.COMMITTED);
+    mockCache.updateCashOrderSt(cashOrderId, statusType);
     return response;
   }
 
@@ -153,6 +154,7 @@ public class AsfsMockService extends CommonMockService implements MessageProcess
     response.setHeaderInfo(copyHeaderInfo(request.getHeaderInfo()));
     response
         .setSrvGetWorkPlaceInfoRsMessage(new SrvGetWorkPlaceInfoRs.SrvGetWorkPlaceInfoRsMessage());
+
     response.getSrvGetWorkPlaceInfoRsMessage().setWorkPlaceType(BigInteger.valueOf(0));
     response.getSrvGetWorkPlaceInfoRsMessage().setCashboxOnBoard(true);
     response.getSrvGetWorkPlaceInfoRsMessage().setSubbranchCode("");
@@ -180,9 +182,11 @@ public class AsfsMockService extends CommonMockService implements MessageProcess
     SrvCheckOverLimitRs response = new SrvCheckOverLimitRs();
     response.setHeaderInfo(copyHeaderInfo(request.getHeaderInfo()));
     response.setSrvCheckOverLimitRsMessage(new SrvCheckOverLimitRs.SrvCheckOverLimitRsMessage());
+    String userLogin = request.getSrvCheckOverLimitRqMessage().getUserLogin();
+    Boolean flag = mockCache.checkOverLimit(userLogin, new Date());
     response.getSrvCheckOverLimitRsMessage().setResponseCode("1234");
     response.getSrvCheckOverLimitRsMessage()
-        .setStatus(LimitStatusType.LIMIT_PASSED);
+        .setStatus(flag ? LimitStatusType.LIMIT_PASSED : LimitStatusType.LIMIT_ERROR);
     return response;
   }
 

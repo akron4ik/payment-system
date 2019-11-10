@@ -429,11 +429,6 @@ public class EsbServiceImpl
         && entityRequest.getRequestData() instanceof CashOrder;
   }
 
-  private boolean isGetWorkplaceRequest(ExternalEntityRequest entityRequest) {
-    return entityRequest.getRequestData() != null
-        && entityRequest.getRequestData() instanceof Workplace;
-  }
-
   private boolean isCheckOverLimitRequest(ExternalEntityRequest entityRequest) {
     return entityRequest.getRequestData() != null
         && entityRequest.getRequestData() instanceof CheckOverLimitRequest;

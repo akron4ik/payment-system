@@ -26,12 +26,12 @@ public interface MockCache {
 
   Long saveTaskCheckbookIssuing(Long packageId, Long taskId, Object taskBody);
 
-  void saveCashOrders(String cashOrderId,
-      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody);
+  void createCashOrder(String cashOrderId,
+      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody, Date day);
 
-  void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st);
+  void updateCashOrderSt(String cashOrderId, CashOrderStatusType st);
 
-  Boolean checkOverLimit(String accountId);
+  Boolean checkOverLimit(String accountId, Date day);
 
   void saveTaskStatus(Long taskId, PkgTaskStatusType status);
 

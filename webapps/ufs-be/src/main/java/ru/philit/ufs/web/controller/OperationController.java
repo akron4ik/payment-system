@@ -10,6 +10,7 @@ import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
 import ru.philit.ufs.model.entity.user.ClientInfo;
+import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.mapping.OperationMapper;
 import ru.philit.ufs.web.provider.OperationProvider;
 import ru.philit.ufs.web.view.AddTaskToPackageReq;
@@ -17,6 +18,8 @@ import ru.philit.ufs.web.view.AddTaskToPackageResp;
 import ru.philit.ufs.web.view.FinishOperationReq;
 import ru.philit.ufs.web.view.FinishOperationResp;
 import ru.philit.ufs.web.view.GetTasksForwardedResp;
+import ru.philit.ufs.web.view.GetWorkplaceReq;
+import ru.philit.ufs.web.view.GetWorkplaceResp;
 
 /**
  * Контроллер действий с операциями.
@@ -37,7 +40,7 @@ public class OperationController {
   /**
    * Оформление операции на УРМ пользователя.
    *
-   * @param request идентификатор УРМ, ОВН для добавления
+   * @param request    идентификатор УРМ, ОВН для добавления
    * @param clientInfo информация о клиенте
    * @return пакет с новой активной задачей
    */
@@ -54,7 +57,7 @@ public class OperationController {
   /**
    * Оформление операции на кассе.
    *
-   * @param request идентификатор кассы, ОВН для добавления
+   * @param request    идентификатор кассы, ОВН для добавления
    * @param clientInfo информация о клиенте
    * @return пакет с новой перенаправленной задачей
    */
@@ -71,7 +74,7 @@ public class OperationController {
   /**
    * Подтверждение операции.
    *
-   * @param request базовые параметры завершения операции
+   * @param request    базовые параметры завершения операции
    * @param clientInfo информация о клиенте
    * @return результат подтверждения операции
    */
@@ -81,7 +84,8 @@ public class OperationController {
   ) {
     Operation operation = provider.confirmOperation(
         mapper.asEntity(request.getPackageId()), mapper.asEntity(request.getTaskId()),
-        request.getWorkplaceId(), request.getOperationTypeCode(), clientInfo
+        request.getWorkplaceId(), request.getCashOrderId(),
+        request.getOperationTypeCode(), clientInfo
     );
     return new FinishOperationResp().withSuccess(mapper.asDto(operation));
   }
@@ -115,4 +119,15 @@ public class OperationController {
     List<OperationTaskCardDeposit> tasks = provider.getForwardedDepositTasks(clientInfo);
     return new GetTasksForwardedResp().withSuccess(mapper.asDto(tasks));
   }
+
+  /**
+   * Получение данных по рабочему месту и лимитов по операциям.
+   *
+   * @param clientInfo информация о клиенте
+   */
+  /*@RequestMapping(value = "/workplace", method = RequestMethod.POST)
+  public GetWorkplaceResp getWorkplace(@RequestBody GetWorkplaceReq workplaceReq,  ClientInfo clientInfo) {
+    Workplace workplace = provider.getWorkplaceInfo(workplaceReq.getWorkplaceId(), clientInfo);
+    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
+  }*/
 }

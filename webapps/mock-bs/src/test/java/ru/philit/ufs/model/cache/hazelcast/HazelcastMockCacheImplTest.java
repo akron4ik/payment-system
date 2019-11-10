@@ -5,9 +5,13 @@ import static org.mockito.Mockito.when;
 import com.hazelcast.core.IMap;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.datatype.DatatypeFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +47,7 @@ public class HazelcastMockCacheImplTest {
   private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId = new MockIMap<>();
-  private IMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> cashOrders = new MockIMap<>();
+  private IMap<Date, Map<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>> cashOrders = new MockIMap<>();
   //private IMap<String, BigDecimal> checkOverLimit = new MockIMap<>();
   private IMap<Long, PkgTaskStatusType> taskStatuses = new MockIMap<>();
   private IMap<Long, OperationPackageInfo> packageById = new MockIMap<>();
@@ -115,37 +119,49 @@ public class HazelcastMockCacheImplTest {
   }
 
   @Test
-  public void cashOrders() throws Exception {
+  public void createCashOrder() throws Exception {
     //given
     SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
     String cashOrderId = "12345";
+    Date day = new Date();
     //when
-    mockCache.saveCashOrders(cashOrderId, ko1);
+    mockCache.createCashOrder(cashOrderId, ko1, day);
     //then
-    Assert.assertTrue(cashOrders.containsKey(cashOrderId));
+    Assert.assertTrue(cashOrders.containsKey(day));
   }
 
   @Test
-  public void updCashOrderSt() {
+  public void updCashOrderSt() throws Exception {
     SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    Date day = new Date();
+    GregorianCalendar calendar = new GregorianCalendar();
+    calendar.setTime(day);
+    ko1.setCashOrderId("12345");
     ko1.setCashOrderStatus(CashOrderStatusType.CREATED);
+    ko1.setCreatedDttm(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
+    CashOrderStatusType cashOrderStatusType = CashOrderStatusType.COMMITTED;
     String cashOrderId = "12345";
-    mockCache.saveCashOrders(cashOrderId, ko1);
-    Assert.assertEquals(cashOrders.get(cashOrderId).getCashOrderStatus(),
+
+    mockCache.createCashOrder(cashOrderId, ko1, day);
+    Assert.assertEquals(cashOrders.get(day).get(cashOrderId).getCashOrderStatus(),
         CashOrderStatusType.CREATED);
-    mockCache.updateCashOrdersSt(cashOrderId, CashOrderStatusType.COMMITTED);
-    Assert.assertEquals(cashOrders.get(cashOrderId).getCashOrderStatus(),
+    mockCache.updateCashOrderSt(cashOrderId, cashOrderStatusType);
+    Assert.assertEquals(cashOrders.get(day).get(cashOrderId).getCashOrderStatus(),
         CashOrderStatusType.COMMITTED);
   }
 
   @Test
   public void checkOverLimit() {
     SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    ko1.setCashOrderId("123456");
     ko1.setCashOrderStatus(CashOrderStatusType.CREATED);
     ko1.setAmount(BigDecimal.valueOf(1000));
     ko1.setAccountId("1234567");
+    Date day = new Date();
+    String cashOrderId = "123456";
+    mockCache.createCashOrder(cashOrderId, ko1, day);
 
-    boolean flag = mockCache.checkOverLimit(ko1.getAccountId());
+    boolean flag = mockCache.checkOverLimit(ko1.getAccountId(), day);
     Assert.assertTrue(flag);
   }
 

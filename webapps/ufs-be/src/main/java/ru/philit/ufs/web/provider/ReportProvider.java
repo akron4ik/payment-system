@@ -13,6 +13,8 @@ import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.cache.OperationCache;
 import ru.philit.ufs.model.cache.UserCache;
 import ru.philit.ufs.model.entity.account.AccountOperationRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashOrderStatus;
 import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTask;
@@ -49,8 +51,8 @@ public class ReportProvider {
   /**
    * Получение списка задач пакетов операций для отчёта.
    *
-   * @param fromDate отбирать пакеты с даты
-   * @param toDate отбирать пакеты по дату
+   * @param fromDate   отбирать пакеты с даты
+   * @param toDate     отбирать пакеты по дату
    * @param clientInfo информация о клиенте
    * @return список пакетов со списками выполненных задач
    */
@@ -111,7 +113,7 @@ public class ReportProvider {
   /**
    * Получение объекта оператора.
    *
-   * @param userLogin логин пользователя
+   * @param userLogin  логин пользователя
    * @param clientInfo информация о клиенте
    * @return объект оператора
    */
@@ -122,9 +124,9 @@ public class ReportProvider {
   /**
    * Расчёт комиссии по операции.
    *
-   * @param accountId номер счёта
-   * @param amount сумма операции
-   * @param operation операция клиента
+   * @param accountId  номер счёта
+   * @param amount     сумма операции
+   * @param operation  операция клиента
    * @param clientInfo информация о клиенте
    * @return значение комиссии
    */
@@ -132,11 +134,13 @@ public class ReportProvider {
       Operation operation, ClientInfo clientInfo) {
     return (accountId != null && amount != null && operation != null)
         ? announcementCache.getCommission(
-            new AccountOperationRequest(accountId, amount, operation.getTypeCode()), clientInfo)
+        new AccountOperationRequest(accountId, amount, operation.getTypeCode()), clientInfo)
         : null;
   }
 
-  /*public  getCashBook(){
+  public CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo) {
+    return (cashOrderId != null && clientInfo != null) ? operationCache
+        .getCashBook(cashOrderId, clientInfo) : null;
+  }
 
-  }*/
 }

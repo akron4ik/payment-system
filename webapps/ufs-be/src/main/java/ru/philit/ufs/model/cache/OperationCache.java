@@ -31,4 +31,8 @@ public interface OperationCache {
 
   CashOrder updCashOrder(CashOrder cashOrder, ClientInfo clientInfo);
 
+  CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo);
+
+  void addCoToCashBook(CashOrder cashOrder, ClientInfo clientInfo);
+
 }

@@ -68,7 +68,6 @@ public class HazelcastServerTest {
     Assert.assertNotNull(hazelcastServer.getCheckOverLimitMap());
     Assert.assertNotNull(hazelcastServer.getWorkplaceMap());
 
-
     hazelcastServer.shutdown();
   }
 

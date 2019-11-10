@@ -58,84 +58,118 @@ public class HazelcastServer {
   /**
    * Очередь для поступления запросов данных.
    */
-  @Getter private IQueue<ExternalEntityRequest> requestQueue;
+  @Getter
+  private IQueue<ExternalEntityRequest> requestQueue;
   /**
    * Очередь для поступления ответов на запросы данных.
    */
-  @Getter private IQueue<ExternalEntity> responseQueue;
+  @Getter
+  private IQueue<ExternalEntity> responseQueue;
 
   /**
    * Коллекция запросов данных.
    */
-  @Getter private IMap<String, ExternalEntityRequest> requestMap;
+  @Getter
+  private IMap<String, ExternalEntityRequest> requestMap;
   /**
    * Коллекция регистрации ответов на запросы данных.
    */
-  @Getter private IMap<ExternalEntityRequest, String> responseFlagMap;
+  @Getter
+  private IMap<ExternalEntityRequest, String> responseFlagMap;
 
   /**
    * Коллекция активных сессий пользователей.
    */
-  @Getter private IMap<String, User> userBySessionMap;
+  @Getter
+  private IMap<String, User> userBySessionMap;
 
   /**
    * Коллекция операций задач.
    */
-  @Getter private IMap<Long, Operation> operationByTaskMap;
+  @Getter
+  private IMap<Long, Operation> operationByTaskMap;
 
   /**
    * Коллекция запросов аудита.
    */
-  @Getter private IList<AuditEntity> auditedRequests;
+  @Getter
+  private IList<AuditEntity> auditedRequests;
   /**
    * Коллекция событий лога.
    */
-  @Getter private IList<LogEntity> loggedEvents;
+  @Getter
+  private IList<LogEntity> loggedEvents;
 
   /*
    * Коллекции данных, полученных на запросы из Мастер-систем.
    */
 
-  @Getter private IMap<LocalKey<String>, Account> accountByIdMap;
-  @Getter private IMap<LocalKey<String>, Account> accountByCardNumberMap;
-  @Getter private IMap<LocalKey<String>, AccountResidues> accountResiduesByIdMap;
-  @Getter private IMap<LocalKey<String>, List<Account>> accountsByLegalEntityMap;
-  @Getter private IMap<LocalKey<String>, LegalEntity> legalEntityByAccountMap;
-  @Getter private IMap<LocalKey<String>, List<Seizure>> seizuresByAccountMap;
-  @Getter private IMap<LocalKey<String>, List<PaymentOrderCardIndex1>>
+  @Getter
+  private IMap<LocalKey<String>, Account> accountByIdMap;
+  @Getter
+  private IMap<LocalKey<String>, Account> accountByCardNumberMap;
+  @Getter
+  private IMap<LocalKey<String>, AccountResidues> accountResiduesByIdMap;
+  @Getter
+  private IMap<LocalKey<String>, List<Account>> accountsByLegalEntityMap;
+  @Getter
+  private IMap<LocalKey<String>, LegalEntity> legalEntityByAccountMap;
+  @Getter
+  private IMap<LocalKey<String>, List<Seizure>> seizuresByAccountMap;
+  @Getter
+  private IMap<LocalKey<String>, List<PaymentOrderCardIndex1>>
       payOrdersCardIndex1ByAccountMap;
-  @Getter private IMap<LocalKey<String>, List<PaymentOrderCardIndex2>>
+  @Getter
+  private IMap<LocalKey<String>, List<PaymentOrderCardIndex2>>
       payOrdersCardIndex2ByAccountMap;
-  @Getter private IMap<LocalKey<AccountOperationRequest>, ExternalEntityContainer<BigDecimal>>
+  @Getter
+  private IMap<LocalKey<AccountOperationRequest>, ExternalEntityContainer<BigDecimal>>
       commissionByAccountOperationMap;
-  @Getter private IMap<LocalKey<AccountOperationRequest>, ExternalEntityContainer<Boolean>>
+  @Getter
+  private IMap<LocalKey<AccountOperationRequest>, ExternalEntityContainer<Boolean>>
       checkFraudByAccountOperationMap;
 
-  @Getter private IMap<LocalKey<OperationPackageRequest>, OperationPackage> operationPackageInfoMap;
-  @Getter private IMap<LocalKey<OperationTasksRequest>, List<OperationPackage>> operationPackageMap;
-  @Getter private IMap<LocalKey<OperationPackage>, OperationPackage> operationPackageResponseMap;
+  @Getter
+  private IMap<LocalKey<OperationPackageRequest>, OperationPackage> operationPackageInfoMap;
+  @Getter
+  private IMap<LocalKey<OperationTasksRequest>, List<OperationPackage>> operationPackageMap;
+  @Getter
+  private IMap<LocalKey<OperationPackage>, OperationPackage> operationPackageResponseMap;
 
-  @Getter private IMap<LocalKey<String>, CashDepositAnnouncement> ovnByUidMap;
-  @Getter private IMap<LocalKey<CashDepositAnnouncementsRequest>, List<CashDepositAnnouncement>>
+  @Getter
+  private IMap<LocalKey<String>, CashDepositAnnouncement> ovnByUidMap;
+  @Getter
+  private IMap<LocalKey<CashDepositAnnouncementsRequest>, List<CashDepositAnnouncement>>
       ovnsMap;
-  @Getter private IMap<LocalKey<CashDepositAnnouncement>, CashDepositAnnouncement> ovnResponseMap;
+  @Getter
+  private IMap<LocalKey<CashDepositAnnouncement>, CashDepositAnnouncement> ovnResponseMap;
 
-  @Getter private IMap<LocalKey<String>, ExternalEntityContainer<String>>
+  @Getter
+  private IMap<LocalKey<String>, ExternalEntityContainer<String>>
       account20202ByWorkPlaceMap;
-  @Getter private IMap<LocalKey<Serializable>, List<OperationType>> operationTypesByRolesMap;
-  @Getter private IMap<LocalKey<RepresentativeRequest>, List<Representative>> representativeMap;
+  @Getter
+  private IMap<LocalKey<Serializable>, List<OperationType>> operationTypesByRolesMap;
+  @Getter
+  private IMap<LocalKey<RepresentativeRequest>, List<Representative>> representativeMap;
 
-  @Getter private IMap<String, List<OperationTypeFavourite>> operationTypeFavouritesByUserMap;
+  @Getter
+  private IMap<String, List<OperationTypeFavourite>> operationTypeFavouritesByUserMap;
 
-  @Getter private IMap<LocalKey<String>, Representative> representativeByCardMap;
+  @Getter
+  private IMap<LocalKey<String>, Representative> representativeByCardMap;
 
-  @Getter private IMap<LocalKey<String>, Operator> operatorByUserMap;
+  @Getter
+  private IMap<LocalKey<String>, Operator> operatorByUserMap;
 
-  @Getter private IMap<LocalKey<CashSymbolRequest>, List<CashSymbol>> cashSymbolsMap;
+  @Getter
+  private IMap<LocalKey<CashSymbolRequest>, List<CashSymbol>> cashSymbolsMap;
 
-  @Getter private IMap<LocalKey<String>, Workplace> workplaceMap;
-  @Getter private IMap<LocalKey<CashOrder>, CashOrder> cashOrderMap;
-  @Getter private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
+  @Getter
+  private IMap<LocalKey<String>, Workplace> workplaceMap;
+  @Getter
+  private IMap<LocalKey<CashOrder>, CashOrder> cashOrderMap;
+  @Getter
+  private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
 
 
   /**
@@ -264,7 +298,6 @@ public class HazelcastServer {
     workplaceMap = instance.getMap(GET_WORKPLACE);
     cashOrderMap = instance.getMap(CASH_ORDER_MAP);
     checkOverLimitMap = instance.getMap(CHECK_OVER_LIMIT_MAP);
-
 
     logger.info("Hazelcast server for {} is started", instance.getName());
   }

@@ -80,15 +80,6 @@ public class MockCacheImpl implements MockCache {
   }
 
   @Override
-  public CashOrder getCashOrder() {
-    CashOrder cashOrder = new CashOrder();
-    cashOrder.setCashOrderId("123456");
-    cashOrder.setCashOrderType(CashOrderType.KO_1);
-    cashOrder.setCashOrderStatus(CashOrderStatus.CREATED);
-    return cashOrder;
-  }
-
-  @Override
   public Operation createOperation(String workplaceId, String operationTypeCode) {
     Operation operation = new Operation();
 
@@ -97,8 +88,6 @@ public class MockCacheImpl implements MockCache {
     operation.setStatus(OperationStatus.NEW);
     operation.setTypeCode(OperationTypeCode.getByCode(operationTypeCode));
     operation.setCreatedDate(new Date());
-    operation.setCashOrderId(getCashOrder().getCashOrderId());
-
     return operation;
   }
 

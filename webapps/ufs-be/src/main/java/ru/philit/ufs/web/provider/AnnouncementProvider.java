@@ -36,8 +36,8 @@ public class AnnouncementProvider {
   /**
    * Получение списка ОВН по критериям.
    *
-   * @param accountId номер счёта
-   * @param status статус ОВН
+   * @param accountId  номер счёта
+   * @param status     статус ОВН
    * @param clientInfo информация о клиенте
    * @return список ОВН
    */
@@ -62,7 +62,7 @@ public class AnnouncementProvider {
    * Получение ОВН по номеру.
    *
    * @param announcementId уникальный номер ОВН
-   * @param clientInfo информация о клиенте
+   * @param clientInfo     информация о клиенте
    * @return ОВН
    */
   public CashDepositAnnouncement getAnnouncement(String announcementId, ClientInfo clientInfo) {
@@ -75,9 +75,9 @@ public class AnnouncementProvider {
   /**
    * Расчёт комиссии по критериям.
    *
-   * @param accountId номер счёта
-   * @param amount сумма операции
-   * @param typeCode код типа операции
+   * @param accountId  номер счёта
+   * @param amount     сумма операции
+   * @param typeCode   код типа операции
    * @param clientInfo информация о клиенте
    * @return значение комиссии
    */
@@ -107,7 +107,7 @@ public class AnnouncementProvider {
    * Получение номера счета №20202 "Касса кредитных организаций".
    *
    * @param workplaceId уникальный номер УРМ/кассы
-   * @param clientInfo информация о клиенте
+   * @param clientInfo  информация о клиенте
    * @return номер счета №20202
    */
   public String getAccount20202(String workplaceId, ClientInfo clientInfo) {
@@ -116,46 +116,4 @@ public class AnnouncementProvider {
     }
     return cache.getAccount20202(workplaceId, clientInfo);
   }
-
-  public Workplace getWorkplace(String workplaceId, ClientInfo clientInfo) {
-
-    CheckOverLimitRequest check = new CheckOverLimitRequest();
-    Workplace workplace = cache.getWorkplace(workplaceId, clientInfo);
-    if (workplace == null) {
-      throw new InvalidDataException("Запрашиваемое рабочее место не найдено в системе");
-    }
-    if ((workplace.getType() == WorkplaceType.UWP) && !workplace.isCashboxOnBoard()) {
-      throw new InvalidDataException("Данное рабочее место не оборудовано кассовым модулем");
-    }
-    if (!ObjectUtils.nullSafeEquals(workplace.getCurrencyType(), "RUB")) {
-      throw new InvalidDataException(
-          "Кассовый модуль может быть использован только для операций в рублях");
-    }
-    if (workplace.getAmount() == null) {
-      throw new InvalidDataException("Отсутствует общий остаток по кассе");
-    }
-    if (cache.checkOverLimit(check, clientInfo)) {
-      throw new InvalidDataException("Превышен лимит общего остатка по кассе");
-    }
-    return workplace;
-  }
-
-   public void checkWorkplaceIncreasedAmount(BigDecimal amount, ClientInfo clientInfo) {
-    Operator operator = userProvider.getOperator(clientInfo);
-    CheckOverLimitRequest check = new CheckOverLimitRequest();
-    check.setAmount(amount);
-    check.setUserLogin(userProvider.getUser(clientInfo.getSessionId()).getLogin());
-
-    Workplace workplace = cache.getWorkplace(operator.getWorkplaceId(), clientInfo);
-    if (workplace == null) {
-      throw new InvalidDataException("Запрашиваемое рабочее место не найдено в системе");
-    }
-    if (workplace.getAmount() == null) {
-      throw new InvalidDataException("Отсутствует общий остаток по кассе");
-    }
-    if (cache.checkOverLimit(check, clientInfo)) {
-      throw new InvalidDataException("Превышен лимит общего остатка по кассе");
-    }
-  }
-
 }

@@ -6,10 +6,12 @@ import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTask;
 import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
+import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.dto.CardDepositDto;
 import ru.philit.ufs.web.dto.OperationDto;
 import ru.philit.ufs.web.dto.OperationPackageDto;
 import ru.philit.ufs.web.dto.OperationTaskDto;
+import ru.philit.ufs.web.dto.WorkplaceDto;
 
 /**
  * Конвертер для операций.
@@ -29,5 +31,7 @@ public interface OperationMapper {
   OperationTaskCardDeposit asEntity(CardDepositDto in);
 
   Long asEntity(String in);
+
+  //WorkplaceDto asDto(Workplace in);
 
 }

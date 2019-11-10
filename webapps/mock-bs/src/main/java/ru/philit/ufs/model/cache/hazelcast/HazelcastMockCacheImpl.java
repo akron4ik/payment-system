@@ -30,6 +30,7 @@ import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.LimitStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1;
 import ru.philit.ufs.model.entity.esb.eks.PkgStatusType;
 import ru.philit.ufs.model.entity.esb.eks.PkgTaskStatusType;
 import ru.philit.ufs.model.entity.esb.eks.SrvGetTaskClOperPkgRs.SrvGetTaskClOperPkgRsMessage;
@@ -88,26 +89,75 @@ public class HazelcastMockCacheImpl implements MockCache {
         taskBody);
   }
 
-  @Override
-  public void saveCashOrders(String cashOrderId,
-      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody) {
-    hazelcastServer.getCashOrders().putIfAbsent(cashOrderId, taskBody);
+  private void saveCashOrders(IMap<Date, Map<String,
+      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>> collection,
+      Date day, String cashOrderId, Object taskBody) {
+
+    if (!collection.containsKey(day)) {
+      collection
+          .put(day, new HashMap<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>());
+    }
+    Map<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1> map = collection.get(day);
+    map.remove(cashOrderId);
+    map.put(cashOrderId, (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1) taskBody);
+    collection.put(day, map);
   }
 
   @Override
-  public void updateCashOrdersSt(String cashOrderId, CashOrderStatusType st) {
-    hazelcastServer.getCashOrders().get(cashOrderId).setCashOrderStatus(st);
+  public void createCashOrder(String cashOrderId,
+      SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 taskBody, Date day) {
+    saveCashOrders(hazelcastServer.getCashOrders(), day, cashOrderId, taskBody);
+
   }
 
   @Override
-  public Boolean checkOverLimit(String accountId) {
-    int toDay = new Date().getDay();
+  public void updateCashOrderSt(String cashOrderId, CashOrderStatusType st) {
+    final SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 =
+        new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    hazelcastServer.getCashOrders().values().forEach(map -> {
+      if (map.containsKey(cashOrderId)) {
+        final SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 updated = map.get(cashOrderId);
+        ko1.setUserFullName(updated.getUserFullName());
+        ko1.setCashOrderId(updated.getCashOrderId());
+        ko1.setResponseCode(updated.getResponseCode());
+        ko1.setResponseMsg(updated.getResponseMsg());
+        ko1.setCashOrderType(updated.getCashOrderType());
+        ko1.setCashOrderStatus(updated.getCashOrderStatus());
+        ko1.setCashOrderINum(updated.getCashOrderINum());
+        ko1.setOperationId(updated.getOperationId());
+        ko1.setINN(updated.getINN());
+        ko1.setCreatedDttm(updated.getCreatedDttm());
+        ko1.setCashSymbols(updated.getCashSymbols());
+        ko1.setRepFIO(updated.getRepFIO());
+        ko1.setRecipientBank(updated.getRecipientBank());
+        ko1.setRecipientBankBIC(updated.getRecipientBankBIC());
+        ko1.setSenderBank(updated.getSenderBank());
+        ko1.setSenderBankBIC(updated.getSenderBankBIC());
+        ko1.setLegalEntityShortName(updated.getLegalEntityShortName());
+        ko1.setFDestLEName(updated.getFDestLEName());
+        ko1.setAmount(updated.getAmount());
+        ko1.setAccountId(updated.getAccountId());
+        ko1.setUserPosition(updated.getUserPosition());
+        ko1.setOperatorPosition(updated.getOperatorPosition());
+      }
+    });
+    ko1.setCashOrderStatus(st);
+    Date day = ko1.getCreatedDttm().toGregorianCalendar().getTime();
+    saveCashOrders(hazelcastServer.getCashOrders(), day, cashOrderId, ko1);
+  }
+
+  @Override
+  public Boolean checkOverLimit(String userLogin, Date day) {
+    if (day == null) {
+      day = new Date();
+    }
     BigDecimal userAmount = BigDecimal.valueOf(0);
-
-    for (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko : hazelcastServer.getCashOrders()
-        .values()) {
-      if (ko.getAccountId().equals(accountId) && toDay == ko.getCreatedDttm().getDay()) {
-        userAmount.add(ko.getAmount());
+    if (hazelcastServer.getCashOrders().containsKey(day)) {
+      Map<String, KO1> map = hazelcastServer.getCashOrders().get(day);
+      for (KO1 ko : map.values()) {
+        if (ko.getAccountId().equals(userLogin)) {
+          userAmount.add(ko.getAmount());
+        }
       }
     }
     return userAmount.compareTo(MAX_LIMIT) <= 0;

@@ -37,7 +37,7 @@ public class UserProvider {
   /**
    * Создание сеанса пользователя.
    *
-   * @param login логин пользователя
+   * @param login    логин пользователя
    * @param password пароль пользователя
    * @return информация о пользователе и идентификатор сессии
    */
@@ -92,4 +92,42 @@ public class UserProvider {
     }
     return operator;
   }
+
+  public Workplace getWorkplaceInfo(String workplaceId, ClientInfo clientInfo) {
+
+    Workplace workplace = cache.getWorkplace(workplaceId, clientInfo);
+    if (workplace == null) {
+      throw new InvalidDataException("Запрашиваемое рабочее место не найдено в системе");
+    }
+    if ((workplace.getType() == WorkplaceType.UWP) && !workplace.isCashboxOnBoard()) {
+      throw new InvalidDataException("Данное рабочее место не оборудовано кассовым модулем");
+    }
+    if (!ObjectUtils.nullSafeEquals(workplace.getCurrencyType(), "RUB")) {
+      throw new InvalidDataException(
+          "Кассовый модуль может быть использован только для операций в рублях");
+    }
+    if (workplace.getAmount() == null) {
+      throw new InvalidDataException("Отсутствует общий остаток по кассе");
+    }
+    if (workplace.getLimit() == null) {
+      throw new InvalidDataException("Отсутствует лимит по кассе");
+    }
+    if (workplace.getAmount().compareTo(workplace.getLimit()) >= 0) {
+      throw new InvalidDataException("Лимит по кассе превышен");
+    }
+    return workplace;
+  }
+
+  public void checkOverLimit(BigDecimal amount, ClientInfo clientInfo) {
+
+    CheckOverLimitRequest check = new CheckOverLimitRequest();
+    check.setAmount(amount);
+    check.setUserLogin(clientInfo.getUser().getLogin());
+
+    if (!cache.checkOverLimit(check, clientInfo)) {
+
+      throw new InvalidDataException("Превышен лимит операций для юзера");
+    }
+  }
+
 }

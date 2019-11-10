@@ -13,6 +13,7 @@ import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.mapping.UserMapper;
 import ru.philit.ufs.web.provider.UserProvider;
 import ru.philit.ufs.web.view.GetOperatorResp;
+import ru.philit.ufs.web.view.GetWorkplaceReq;
 import ru.philit.ufs.web.view.GetWorkplaceResp;
 import ru.philit.ufs.web.view.LoginUserReq;
 import ru.philit.ufs.web.view.LoginUserResp;
@@ -66,5 +67,12 @@ public class UserController {
   public GetOperatorResp getOperator(ClientInfo clientInfo) {
     Operator operator = provider.getOperator(clientInfo);
     return new GetOperatorResp().withSuccess(mapper.asDto(operator));
+  }
+
+  @RequestMapping(value = "/workplace", method = RequestMethod.POST)
+  public GetWorkplaceResp getWorkplace(@RequestBody GetWorkplaceReq workplaceReq,
+      ClientInfo clientInfo) {
+    Workplace workplace = provider.getWorkplaceInfo(workplaceReq.getWorkplaceId(), clientInfo);
+    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
   }
 }

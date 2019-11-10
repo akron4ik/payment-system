@@ -1,6 +1,7 @@
 package ru.philit.ufs.model.cache.hazelcast;
 
 import static java.util.Collections.singletonList;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CASH_BOOK;
 import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CHECK_OVER_LIMIT_MAP;
 import static ru.philit.ufs.model.entity.request.RequestType.*;
 
@@ -275,6 +276,20 @@ public class HazelcastCacheImpl
     ExternalEntityContainer<Boolean> container = requestData(request, client.getCheckOverLimitMap(),
         CHECK_OVER_LIMIT, clientInfo);
     return container.getData();
+  }
+
+  @Override
+  public CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo) {
+    return requestData(cashOrderId, client.getCashBookMap(), CASH_BOOK, clientInfo);
+  }
+
+  @Override
+  public void addCoToCashBook(CashOrder cashOrder, ClientInfo clientInfo) {
+    LocalKey<String> localKey = new LocalKey<>(clientInfo.getSessionId(),
+        cashOrder.getCashOrderId());
+    if (cashOrder.getCashOrderStatus().equals(CashOrderStatus.COMMITTED)) {
+      client.getCashBookMap().put(localKey, cashOrder);
+    }
   }
 
   private <K extends Serializable, V> V requestData(

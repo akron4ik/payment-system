@@ -5,6 +5,7 @@ import java.util.List;
 import ru.philit.ufs.model.entity.account.AccountOperationRequest;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
 import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.model.entity.user.Workplace;
@@ -22,9 +23,4 @@ public interface AnnouncementCache {
   BigDecimal getCommission(AccountOperationRequest request, ClientInfo clientInfo);
 
   String getAccount20202(String workplaceId, ClientInfo clientInfo);
-
-  Workplace getWorkplace(String workPlaceId, ClientInfo clientInfo);
-
-  Boolean checkOverLimit(CheckOverLimitRequest request, ClientInfo clientInfo);
-
 }

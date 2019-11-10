@@ -13,7 +13,7 @@ public class CheckOverAdapter extends AsfsAdapter {
 
 
   private static boolean limitStatusType(LimitStatusType limitStatusType) {
-    return (limitStatusType.value().equals(LIMIT_PASSED));
+    return (limitStatusType.value().equals(LIMIT_PASSED.value()));
   }
 
   private static void map(CheckOverLimitRequest params,

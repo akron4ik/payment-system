@@ -112,7 +112,7 @@ public class HazelcastBeClient {
   @Getter
   private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
   @Getter
-  private IMap<LocalKey<String>, CashOrder> cashBook;
+  private IMap<LocalKey<String>, CashOrder> cashBookMap;
 
   @Autowired
   public HazelcastBeClient(
@@ -165,6 +165,7 @@ public class HazelcastBeClient {
     cashOrderMap = instance.getMap(CASH_ORDER_MAP);
     workplaceMap = instance.getMap(GET_WORKPLACE);
     checkOverLimitMap = instance.getMap(CHECK_OVER_LIMIT_MAP);
+    cashBookMap = instance.getMap(CASH_BOOK);
 
     logger.info("{} started", this.getClass().getSimpleName());
   }

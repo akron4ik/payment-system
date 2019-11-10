@@ -6,8 +6,7 @@ import lombok.ToString;
 import ru.philit.ufs.web.dto.BaseRequest;
 
 /**
- * Запрос для операций
- * {@link ru.philit.ufs.web.controller.OperationController#confirmOperation}
+ * Запрос для операций {@link ru.philit.ufs.web.controller.OperationController#confirmOperation}
  * {@link ru.philit.ufs.web.controller.OperationController#cancelOperation}
  */
 @ToString
@@ -32,5 +31,10 @@ public class FinishOperationReq extends BaseRequest {
    * Код типа операции.
    */
   private String operationTypeCode;
+  /**
+   * Код типа операции.
+   */
+  private String cashOrderId;
+
 
 }

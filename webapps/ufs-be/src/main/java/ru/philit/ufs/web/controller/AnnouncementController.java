@@ -33,7 +33,7 @@ public class AnnouncementController {
   /**
    * Получение списка ОВН по номеру счета.
    *
-   * @param request данные о номере счёта и, возможно, статусе объявлений
+   * @param request    данные о номере счёта и, возможно, статусе объявлений
    * @param clientInfo информация о клиенте
    * @return список ОВН
    */
@@ -50,7 +50,7 @@ public class AnnouncementController {
   /**
    * Получение экземпляра предоформленного ОВН по уникальному идентификатору ОВН.
    *
-   * @param request данные об идентификаторе ОВН
+   * @param request    данные об идентификаторе ОВН
    * @param clientInfo информация о клиенте
    * @return экземпляр предоформленного ОВН
    */
@@ -67,7 +67,7 @@ public class AnnouncementController {
   /**
    * Получение информации о комиссии суммы для типа операции.
    *
-   * @param request данные о номере счёта, сумме и типе операции
+   * @param request    данные о номере счёта, сумме и типе операции
    * @param clientInfo информация о клиенте
    * @return сумма комиссии
    */
@@ -84,7 +84,7 @@ public class AnnouncementController {
   /**
    * Получение номера счета №20202 "Касса кредитных организаций".
    *
-   * @param request данные о рабочем месте
+   * @param request    данные о рабочем месте
    * @param clientInfo информация о клиенте
    * @return номер счета №20202 "Касса кредитных организаций"
    */
@@ -96,14 +96,4 @@ public class AnnouncementController {
     return new GetAccount20202Resp().withSuccess(number);
   }
 
-  /**
-   * Получение данных по рабочему месту и лимитов по операциям.
-   *
-   * @param clientInfo информация о клиенте
-   */
-  @RequestMapping(value = "/workplace", method = RequestMethod.POST)
-  public GetWorkplaceResp getWorkplace(@RequestBody GetWorkplaceReq workplaceReq,  ClientInfo clientInfo) {
-    Workplace workplace = provider.getWorkplace(workplaceReq.getWorkplaceId(), clientInfo);
-    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
-  }
 }

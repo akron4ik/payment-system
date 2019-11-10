@@ -52,6 +52,8 @@ public final class CollectionNames {
   public static final String CASH_ORDER_MAP = "cashOderMap";
   public static final String GET_WORKPLACE = "getWorkplaceMap";
 
+  public static final String CASH_BOOK = "cashBook";
+
 
   private CollectionNames() {
   }

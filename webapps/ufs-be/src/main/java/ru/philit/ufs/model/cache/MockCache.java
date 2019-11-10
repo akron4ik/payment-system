@@ -21,7 +21,4 @@ public interface MockCache {
   Operation commitOperation(Operation operation);
 
   Operation cancelOperation(Operation operation);
-
-  CashOrder getCashOrder();
-
 }

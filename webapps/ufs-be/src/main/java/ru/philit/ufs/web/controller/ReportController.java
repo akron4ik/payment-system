@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.philit.ufs.model.entity.account.Representative;
+import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTask;
@@ -20,6 +21,8 @@ import ru.philit.ufs.web.dto.OperationJournalDto;
 import ru.philit.ufs.web.mapping.OperationJournalMapper;
 import ru.philit.ufs.web.provider.ReportProvider;
 import ru.philit.ufs.web.provider.RepresentativeProvider;
+import ru.philit.ufs.web.view.GetCashBookReq;
+import ru.philit.ufs.web.view.GetCashBookResp;
 import ru.philit.ufs.web.view.GetOperationJournalReq;
 import ru.philit.ufs.web.view.GetOperationJournalResp;
 
@@ -51,7 +54,7 @@ public class ReportController {
   /**
    * Получение списка записей журнала операций.
    *
-   * @param request параметры запроса списка
+   * @param request    параметры запроса списка
    * @param clientInfo информация о клиенте
    * @return список записей
    */
@@ -76,7 +79,7 @@ public class ReportController {
 
         Operator operator = reportProvider.getOperator(opPackage.getUserLogin(), clientInfo);
         User taskUser = reportProvider.getUser(opPackage.getUserLogin());
-        BigDecimal commissionAmount =  reportProvider.getCommission(
+        BigDecimal commissionAmount = reportProvider.getCommission(
             taskCardDeposit.getAccountId(), taskCardDeposit.getAmount(), operation, clientInfo
         );
         Representative representative = representativeProvider.getRepresentativeById(
@@ -95,5 +98,11 @@ public class ReportController {
     }
 
     return new GetOperationJournalResp().withSuccess(items);
+  }
+
+  @RequestMapping(value = "/cashBook", method = RequestMethod.POST)
+  public GetCashBookResp getCashBook(@RequestBody GetCashBookReq request, ClientInfo clientInfo) {
+    CashOrder cashOrder = reportProvider.getCashBook(request.getCashOrderId(), clientInfo);
+    return new GetCashBookResp().withSuccess(cashOrder);
   }
 }
