@@ -10,7 +10,12 @@ import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.CashSymbol;
 import ru.philit.ufs.model.entity.oper.OperationTypeLimit;
 import ru.philit.ufs.model.entity.user.Workplace;
-import ru.philit.ufs.web.dto.*;
+import ru.philit.ufs.web.dto.AnnouncementDto;
+import ru.philit.ufs.web.dto.CashOrderDto;
+import ru.philit.ufs.web.dto.CashSymbolDto;
+import ru.philit.ufs.web.dto.OperationTypeLimitDto;
+import ru.philit.ufs.web.dto.WorkplaceDto;
+
 import ru.philit.ufs.web.mapping.AnnouncementMapper;
 
 @Component
@@ -66,6 +71,33 @@ public class AnnouncementMapperImpl extends CommonMapperImpl implements Announce
   }
 
   @Override
+  public WorkplaceDto asDto(Workplace in) {
+    if (in == null) {
+      return null;
+    }
+    WorkplaceDto out = new WorkplaceDto();
+
+    out.setSubbranchCode(in.getSubbranchCode());
+    out.setCashboxDeviceId(in.getCashboxDeviceId());
+    out.setCashboxDeviceType(in.getCashboxDeviceType());
+    out.setCurrencyType(in.getCurrencyType());
+    out.setAmount(asDto(in.getAmount()));
+    out.setLimit(asDto(in.getLimit()));
+    out.setCategoryLimits(asLimitDto(in.getCategoryLimits()));
+
+    return out;
+  }
+
+  private OperationTypeLimitDto asDto(OperationTypeLimit in) {
+    OperationTypeLimitDto out = new OperationTypeLimitDto();
+
+    out.setCategoryId(in.getCategoryId());
+    out.setLimit(asDto(in.getLimit()));
+
+    return out;
+  }
+
+  @Override
   public List<AnnouncementDto> asAnnouncementDto(List<CashDepositAnnouncement> in) {
     if (in == null) {
       return Collections.emptyList();
@@ -90,32 +122,6 @@ public class AnnouncementMapperImpl extends CommonMapperImpl implements Announce
     return out;
   }
 
-  @Override
-  public WorkplaceDto asDto(Workplace in) {
-    if (in == null) {
-      return null;
-    }
-    WorkplaceDto out = new WorkplaceDto();
-
-    out.setSubbranchCode(in.getSubbranchCode());
-    out.setCashboxDeviceId(in.getCashboxDeviceId());
-    out.setCashboxDeviceType(in.getCashboxDeviceType());
-    out.setCurrencyType(in.getCurrencyType());
-    out.setAmount(asDto(in.getAmount()));
-    out.setLimit(asDto(in.getLimit()));
-    out.setCategoryLimits(asLimitDto(in.getCategoryLimits()));
-
-    return out;
-  }
-
-  public CashOrderDto asDto(CashOrder in){
-    if (in == null) {
-      return null;
-    }
-    CashOrderDto cashOrderDto = new CashOrderDto();
-    return cashOrderDto;
-  }
-
   private List<OperationTypeLimitDto> asLimitDto(List<OperationTypeLimit> in) {
     if (in == null) {
       return Collections.emptyList();
@@ -125,15 +131,6 @@ public class AnnouncementMapperImpl extends CommonMapperImpl implements Announce
     for (OperationTypeLimit typeLimit : in) {
       out.add(asDto(typeLimit));
     }
-    return out;
-  }
-
-  private OperationTypeLimitDto asDto(OperationTypeLimit in) {
-    OperationTypeLimitDto out = new OperationTypeLimitDto();
-
-    out.setCategoryId(in.getCategoryId());
-    out.setLimit(asDto(in.getLimit()));
-
     return out;
   }
 }

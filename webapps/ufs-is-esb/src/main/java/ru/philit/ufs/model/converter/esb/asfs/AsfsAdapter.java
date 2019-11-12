@@ -1,11 +1,10 @@
 package ru.philit.ufs.model.converter.esb.asfs;
 
+import java.util.Date;
+import java.util.UUID;
 import ru.philit.ufs.model.converter.esb.CommonAdapter;
 import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.esb.asfs.HeaderInfoType;
-
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Базовый класс для конвертеров Сущностей и транспортных объектов Мастер-системы АС-ФС.

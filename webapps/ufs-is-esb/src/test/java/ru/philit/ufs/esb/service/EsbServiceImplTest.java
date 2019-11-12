@@ -27,9 +27,16 @@ import ru.philit.ufs.model.entity.account.AccountOperationRequest;
 import ru.philit.ufs.model.entity.account.RepresentativeRequest;
 import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.common.ExternalEntityRequest;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
+import ru.philit.ufs.model.entity.oper.OperationPackage;
+import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
+import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
 import ru.philit.ufs.model.entity.request.RequestType;
-import ru.philit.ufs.model.entity.user.Workplace;
+
 
 public class EsbServiceImplTest {
 

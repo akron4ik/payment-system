@@ -42,7 +42,7 @@ public interface MockCache {
   OperationPackageInfo getPackageInfo(Long packageId);
 
   Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>>
-  searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
+      searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
       Date toDate, List<Long> taskIds);
 
 }

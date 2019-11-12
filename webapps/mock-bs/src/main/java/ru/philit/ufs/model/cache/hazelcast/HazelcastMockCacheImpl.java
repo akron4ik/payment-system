@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
-import ru.philit.ufs.model.entity.esb.asfs.LimitStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
 import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1;
 import ru.philit.ufs.model.entity.esb.eks.PkgStatusType;
@@ -230,7 +227,7 @@ public class HazelcastMockCacheImpl implements MockCache {
 
   @Override
   public Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>>
-  searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
+      searchTasksCardDeposit(Long packageId, PkgTaskStatusType taskStatus, Date fromDate,
       Date toDate, List<Long> taskIds) {
     Map<Long, List<SrvGetTaskClOperPkgRsMessage.PkgItem.ToCardDeposit.TaskItem>> targetLists =
         new HashMap<>();

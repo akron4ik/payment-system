@@ -1,21 +1,34 @@
 package ru.philit.ufs.model.converter.esb.asfs;
 
+import java.util.ArrayList;
+import org.mapstruct.factory.Mappers;
 import ru.philit.ufs.model.entity.account.Representative;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
-import ru.philit.ufs.model.entity.esb.asfs.*;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
+import ru.philit.ufs.model.entity.esb.asfs.OperTypeLabel;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRs.SrvGetWorkPlaceInfoRsMessage.WorkPlaceOperationTypeLimit;
+import ru.philit.ufs.model.entity.esb.asfs.SrvUpdStCashOrderRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvUpdStCashOrderRs;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashOrderStatus;
 import ru.philit.ufs.model.entity.oper.CashOrderType;
+import ru.philit.ufs.model.entity.oper.CashSymbol;
+import ru.philit.ufs.model.entity.oper.OperationTypeLimit;
 import ru.philit.ufs.model.entity.user.Subbranch;
 import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.model.entity.user.WorkplaceType;
-
-import java.util.ArrayList;
-
 
 /**
  * Преобразователь между сущностью CashOrder и соответствующим транспортным объектом.
  */
 public class CashOrderAdapter extends AsfsAdapter {
+
+  private static CashOrderAdapterMapStruct mapper =
+      Mappers.getMapper(CashOrderAdapterMapStruct.class);
 
   private static OperTypeLabel operTypeLabel(OperationTypeCode operationTypeCode) {
     return (operationTypeCode != null) ? OperTypeLabel.fromValue(operationTypeCode.code()) : null;
@@ -38,7 +51,8 @@ public class CashOrderAdapter extends AsfsAdapter {
 
   private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData(
       Representative representative) {
-    SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData = new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData();
+    SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData repData
+        = new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.RepData();
     if (representative != null) {
       repData.setAddress(representative.getAddress());
       repData.setDateOfBirth(xmlCalendar(representative.getBirthDate()));
@@ -55,7 +69,8 @@ public class CashOrderAdapter extends AsfsAdapter {
 
   private static SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo(
       Subbranch subbranch) {
-    SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo = new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo();
+    SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo additionalInfo =
+        new SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo();
     if (subbranch != null) {
       additionalInfo.setGOSBCode(subbranch.getGosbCode());
       additionalInfo.setOSBCode(subbranch.getOsbCode());
@@ -80,9 +95,10 @@ public class CashOrderAdapter extends AsfsAdapter {
     message.setCurrencyType(cashOrder.getCurrencyType());
     message.setWorkPlaceUId(cashOrder.getWorkPlaceUId());
     message.setOperationType(operTypeLabel(cashOrder.getOperationTypeCode()));
-    message.setRepData(repData(cashOrder.getRepData()));
+    message.setRepData(repData(cashOrder.getRepresentative()));
     message.setAdditionalInfo(additionalInfo(cashOrder.getSubbranch()));
-
+    message.getAdditionalInfo().setAccount20202Num(cashOrder.getAccount20202Num());
+    message.getAdditionalInfo().setUserLogin(cashOrder.getUserLogin());
   }
 
   private static void map(SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage message,
@@ -96,7 +112,8 @@ public class CashOrderAdapter extends AsfsAdapter {
     cashOrder.setCashOrderType(cashOrderTypeCode(message.getKO1().getCashOrderType()));
     cashOrder.setCashSymbols(new ArrayList<CashSymbol>());
     if (message.getKO1().getCashSymbols() != null) {
-      for (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem cashSymbolItem :
+      for (SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem
+          cashSymbolItem :
           message.getKO1().getCashSymbols().getCashSymbolItem()) {
         CashSymbol cashSymbol = new CashSymbol();
         cashSymbol.setCode(cashSymbolItem.getCashSymbol());
@@ -106,16 +123,16 @@ public class CashOrderAdapter extends AsfsAdapter {
     }
     cashOrder.setCreatedDttm(date(message.getKO1().getCreatedDttm()));
     cashOrder.setFdestleName(message.getKO1().getFDestLEName());
-    cashOrder.setRepData(new Representative());
-    cashOrder.getRepData().setInn(message.getKO1().getINN());
+    cashOrder.setRepresentative(new Representative());
+    cashOrder.getRepresentative().setInn(message.getKO1().getINN());
     cashOrder.setLegalEntityShortName(message.getKO1().getLegalEntityShortName());
     cashOrder.setOperatorPosition(message.getKO1().getOperatorPosition());
     cashOrder.setOperationId(message.getKO1().getOperationId());
     cashOrder.setRecipientBank(message.getKO1().getRecipientBank());
     cashOrder.setRecipientBankBic(message.getKO1().getRecipientBankBIC());
-    cashOrder.getRepData().setLastName(message.getKO1().getRepFIO().split(" ")[0]);
-    cashOrder.getRepData().setFirstName(message.getKO1().getRepFIO().split(" ")[1]);
-    cashOrder.getRepData().setPatronymic(message.getKO1().getRepFIO().split(" ")[2]);
+    cashOrder.getRepresentative().setLastName(message.getKO1().getRepFIO().split(" ")[0]);
+    cashOrder.getRepresentative().setFirstName(message.getKO1().getRepFIO().split(" ")[1]);
+    cashOrder.getRepresentative().setPatronymic(message.getKO1().getRepFIO().split(" ")[2]);
     cashOrder.setResponseCode(message.getKO1().getResponseCode());
     cashOrder.setResponseMsg(message.getKO1().getResponseMsg());
     cashOrder.setUserFullName(message.getKO1().getUserFullName());
@@ -123,7 +140,6 @@ public class CashOrderAdapter extends AsfsAdapter {
     cashOrder.setSenderBankBic(message.getKO1().getSenderBankBIC());
     cashOrder.setClientTypeFk(message.getKO1().isClientTypeFK());
     cashOrder.setUserPosition(message.getKO1().getUserPosition());
-
   }
 
   private static void map(SrvGetWorkPlaceInfoRs.SrvGetWorkPlaceInfoRsMessage message,
@@ -137,8 +153,8 @@ public class CashOrderAdapter extends AsfsAdapter {
     workplace.setLimit(message.getWorkPlaceLimit());
     workplace.setCategoryLimits(new ArrayList<OperationTypeLimit>());
     if (message.getWorkPlaceOperationTypeLimit() != null) {
-      for (SrvGetWorkPlaceInfoRs.SrvGetWorkPlaceInfoRsMessage.WorkPlaceOperationTypeLimit.OperationTypeLimitItem
-          operationTypeLimitItem : message.getWorkPlaceOperationTypeLimit()
+      for (WorkPlaceOperationTypeLimit.OperationTypeLimitItem operationTypeLimitItem:
+          message.getWorkPlaceOperationTypeLimit()
           .getOperationTypeLimitItem()) {
         OperationTypeLimit operationTypeLimit = new OperationTypeLimit();
         operationTypeLimit.setCategoryId(operationTypeLimitItem.getOperationCategory().toString());
@@ -159,6 +175,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     cashOrder.setCashOrderType(cashOrderTypeCode(message.getCashOrderType()));
   }
 
+  /**
+   * Возвращает объект запроса создания кассового ордера.
+   */
   public static SrvCreateCashOrderRq requestCreateOrder(CashOrder cashOrder) {
     SrvCreateCashOrderRq request = new SrvCreateCashOrderRq();
     request.setHeaderInfo(headerInfo());
@@ -167,6 +186,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     return request;
   }
 
+  /**
+   * Возвращает объект запроса обновления кассового ордера.
+   */
   public static SrvUpdStCashOrderRq requestUpdCashOrder(CashOrder cashOrder) {
     SrvUpdStCashOrderRq request = new SrvUpdStCashOrderRq();
     request.setHeaderInfo(headerInfo());
@@ -177,6 +199,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     return request;
   }
 
+  /**
+   * Возвращает объект запроса информации по рабочему месту.
+   */
   public static SrvGetWorkPlaceInfoRq requestGetWorkPlace(String workPlaceId) {
     SrvGetWorkPlaceInfoRq request = new SrvGetWorkPlaceInfoRq();
     request.setHeaderInfo(headerInfo());
@@ -186,6 +211,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     return request;
   }
 
+  /**
+   * Конвертируем ответ в кассовый ордер.
+   */
   public static CashOrder convert(SrvCreateCashOrderRs response) {
     CashOrder cashOrder = new CashOrder();
     map(response.getHeaderInfo(), cashOrder);
@@ -193,6 +221,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     return cashOrder;
   }
 
+  /**
+   * Конвертируем ответ в кассовый ордер.
+   */
   public static CashOrder convert(SrvUpdStCashOrderRs response) {
     CashOrder cashOrder = new CashOrder();
     map(response.getHeaderInfo(), cashOrder);
@@ -200,6 +231,9 @@ public class CashOrderAdapter extends AsfsAdapter {
     return cashOrder;
   }
 
+  /**
+   * Конвертируем ответ в рабочее место.
+   */
   public static Workplace convert(SrvGetWorkPlaceInfoRs response) {
     Workplace workplace = new Workplace();
     map(response.getHeaderInfo(), workplace);
@@ -207,5 +241,35 @@ public class CashOrderAdapter extends AsfsAdapter {
     return workplace;
   }
 
+  //******** MapStruct ********
+  /**
+   * Возвращает объект запроса создания кассового ордера. С использованием MapStruct.
+   */
+  public static SrvCreateCashOrderRq requestCreateOrderMapStruct(CashOrder cashOrder) {
+    SrvCreateCashOrderRq request = new SrvCreateCashOrderRq();
+    request.setHeaderInfo(headerInfo());
+    request.setSrvCreateCashOrderRqMessage(mapper.mapCreate(cashOrder));
+    return request;
+  }
+
+  /**
+   * Возвращает объект запроса обновления кассового ордера. С использованием MapStruct.
+   */
+  public static SrvUpdStCashOrderRq requestUpdStCashOrderMapStruct(CashOrder cashOrder) {
+    SrvUpdStCashOrderRq request = new SrvUpdStCashOrderRq();
+    request.setHeaderInfo(headerInfo());
+    request.setSrvUpdCashOrderRqMessage(mapper.mapUpdSt(cashOrder));
+    return request;
+  }
+
+  /**
+   * Возвращает объект запроса получения информации по рабочему месту. С использованием MapStruct.
+   */
+  public static SrvGetWorkPlaceInfoRq requestGetWorkPlaceInfoMapStruct(String workPlaceId) {
+    SrvGetWorkPlaceInfoRq request = new SrvGetWorkPlaceInfoRq();
+    request.setHeaderInfo(headerInfo());
+    request.setSrvGetWorkPlaceInfoRqMessage(mapper.mapGetWorkplace(workPlaceId));
+    return request;
+  }
 
 }

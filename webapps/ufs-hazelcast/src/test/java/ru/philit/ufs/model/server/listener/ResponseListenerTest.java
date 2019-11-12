@@ -28,7 +28,19 @@ import ru.philit.ufs.model.entity.common.ExternalEntityList2;
 import ru.philit.ufs.model.entity.common.ExternalEntityRequest;
 import ru.philit.ufs.model.entity.common.LocalKey;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashSymbol;
+import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
+import ru.philit.ufs.model.entity.oper.OperationPackage;
+import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
+import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+import ru.philit.ufs.model.entity.oper.OperationType;
+import ru.philit.ufs.model.entity.oper.OperationTypeFavourite;
+import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex1;
+import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex2;
 import ru.philit.ufs.model.entity.request.RequestType;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.Workplace;
@@ -95,7 +107,8 @@ public class ResponseListenerTest {
       new MockIMap<>();
   private final IMap<LocalKey<CashOrder>, CashOrder> cashOrderIMap = new MockIMap<>();
   private final IMap<LocalKey<String>, Workplace> workplaceIMap = new MockIMap<>();
-  private final IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap = new MockIMap<>();
+  private final IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>>
+      checkOverLimitMap = new MockIMap<>();
 
   @Mock
   private HazelcastServer hazelcastServer;

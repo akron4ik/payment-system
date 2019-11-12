@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import ru.philit.ufs.model.cache.AnnouncementCache;
 import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.cache.UserCache;
 import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
@@ -93,6 +92,12 @@ public class UserProvider {
     return operator;
   }
 
+  /**
+   * Получение данных о рабочем месте.
+   *
+   * @param clientInfo информация о клиенте
+   * @return информация об операторе
+   */
   public Workplace getWorkplaceInfo(String workplaceId, ClientInfo clientInfo) {
 
     Workplace workplace = cache.getWorkplace(workplaceId, clientInfo);
@@ -118,6 +123,11 @@ public class UserProvider {
     return workplace;
   }
 
+  /**
+   * Получение данных о превышении лимита.
+   *
+   * @param clientInfo информация о клиенте
+   */
   public void checkOverLimit(BigDecimal amount, ClientInfo clientInfo) {
 
     CheckOverLimitRequest check = new CheckOverLimitRequest();

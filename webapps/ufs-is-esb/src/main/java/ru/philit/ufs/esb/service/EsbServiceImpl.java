@@ -60,9 +60,15 @@ import ru.philit.ufs.model.entity.esb.pprb.SrvGetRepByCardRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvGetUserOperationsByRoleRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvSearchRepRq;
 import ru.philit.ufs.model.entity.esb.pprb.SrvUpdCashDepAnmntItemRq;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
+import ru.philit.ufs.model.entity.oper.OperationPackage;
+import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
+import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
 import ru.philit.ufs.model.entity.request.RequestType;
-import ru.philit.ufs.model.entity.user.Workplace;
 
 /**
  * Сервис на маршрутизацию сообщений между Hazelcast и КСШ.
@@ -310,6 +316,14 @@ public class EsbServiceImpl
             esbClient.sendMessage(pprbConverter.getXml(request));
           }
           break;
+        case RequestType.GET_WORKPLACE_INFO:
+          if (isRequestDataString(entityRequest)) {
+            SrvGetWorkPlaceInfoRq request = CashOrderAdapter
+                .requestGetWorkPlace((String) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+          break;
 
         case RequestType.OPERATOR_BY_USER:
           if (isRequestDataString(entityRequest)) {
@@ -329,6 +343,15 @@ public class EsbServiceImpl
           }
           break;
 
+        case RequestType.CHECK_OVER_LIMIT:
+          if (isCheckOverLimitRequest(entityRequest)) {
+            SrvCheckOverLimitRq request = CheckOverAdapter
+                .requestByParams((CheckOverLimitRequest) entityRequest.getRequestData());
+            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
+            esbClient.sendMessage(asfsConverter.getXml(request));
+          }
+          break;
+
         case RequestType.CREATE_CASHORDER:
           if (isCashOrderRequest(entityRequest)) {
             SrvCreateCashOrderRq request = CashOrderAdapter
@@ -345,23 +368,7 @@ public class EsbServiceImpl
             isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
             esbClient.sendMessage(asfsConverter.getXml(request));
           }
-
-        case RequestType.GET_WORKPLACE_INFO:
-          if (isRequestDataString(entityRequest)) {
-            SrvGetWorkPlaceInfoRq request = CashOrderAdapter
-                .requestGetWorkPlace((String) entityRequest.getRequestData());
-            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
-            esbClient.sendMessage(asfsConverter.getXml(request));
-          }
           break;
-
-        case RequestType.CHECK_OVER_LIMIT:
-          if (isCheckOverLimitRequest(entityRequest)) {
-            SrvCheckOverLimitRq request = CheckOverAdapter
-                .requestByParams((CheckOverLimitRequest) entityRequest.getRequestData());
-            isEsbCache.putRequest(request.getHeaderInfo().getRqUID(), entityRequest);
-            esbClient.sendMessage(asfsConverter.getXml(request));
-          }
 
         default:
           logger.error("Sending ExternalEntityRequest with unknown entityType {}",

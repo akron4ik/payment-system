@@ -1,5 +1,40 @@
 package ru.philit.ufs.model.server;
 
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.ACCOUNTS_BY_LEGAL_ENTITY_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.ACCOUNT_20202_BY_WORK_PLACE_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.ACCOUNT_BY_CARD_NUMBER_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.ACCOUNT_BY_ID_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.ACCOUNT_RESIDUES_BY_ID_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.AUDITED_REQUESTS;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CASH_ORDER_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CASH_SYMBOLS_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CHECK_FRAUD_BY_ACCOUNT_OPERATION_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.CHECK_OVER_LIMIT_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.COMMISSION_BY_ACCOUNT_OPERATION_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.GET_WORKPLACE;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.LEGAL_ENTITY_BY_ACCOUNT_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.LOGGED_EVENTS;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_BY_TASK_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_PACKAGE_INFO_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_PACKAGE_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_PACKAGE_RESPONSE_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_TYPES_BY_ROLES_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATION_TYPE_FAVOURITES_BY_USER_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OPERATOR_BY_USER_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OVNS_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OVN_BY_UID_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.OVN_RESPONSE_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.PAY_ORDERS_CARD_INDEX_1_BY_ACCOUNT_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.PAY_ORDERS_CARD_INDEX_2_BY_ACCOUNT_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.REPRESENTATIVE_BY_CARD_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.REPRESENTATIVE_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.REQUEST_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.REQUEST_QUEUE;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.RESPONSE_FLAG_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.RESPONSE_QUEUE;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.SEIZURES_BY_ACCOUNT_MAP;
+import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.USER_BY_SESSION_MAP;
+
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
@@ -30,14 +65,25 @@ import ru.philit.ufs.model.entity.common.ExternalEntity;
 import ru.philit.ufs.model.entity.common.ExternalEntityContainer;
 import ru.philit.ufs.model.entity.common.ExternalEntityRequest;
 import ru.philit.ufs.model.entity.common.LocalKey;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
+import ru.philit.ufs.model.entity.oper.CashDepositAnnouncementsRequest;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashSymbol;
+import ru.philit.ufs.model.entity.oper.CashSymbolRequest;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
+import ru.philit.ufs.model.entity.oper.Operation;
+import ru.philit.ufs.model.entity.oper.OperationPackage;
+import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
+import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+import ru.philit.ufs.model.entity.oper.OperationType;
+import ru.philit.ufs.model.entity.oper.OperationTypeFavourite;
+import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex1;
+import ru.philit.ufs.model.entity.oper.PaymentOrderCardIndex2;
 import ru.philit.ufs.model.entity.service.AuditEntity;
 import ru.philit.ufs.model.entity.service.LogEntity;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.User;
 import ru.philit.ufs.model.entity.user.Workplace;
-
-import static ru.philit.ufs.model.cache.hazelcast.CollectionNames.*;
 
 /**
  * Контейнер коллекций распределённого кеша.

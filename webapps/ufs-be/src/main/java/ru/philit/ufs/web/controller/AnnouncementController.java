@@ -9,10 +9,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.philit.ufs.model.entity.oper.CashDepositAnnouncement;
 import ru.philit.ufs.model.entity.user.ClientInfo;
-import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.mapping.AnnouncementMapper;
 import ru.philit.ufs.web.provider.AnnouncementProvider;
-import ru.philit.ufs.web.view.*;
+import ru.philit.ufs.web.view.GetAccount20202Req;
+import ru.philit.ufs.web.view.GetAccount20202Resp;
+import ru.philit.ufs.web.view.GetAnnouncementReq;
+import ru.philit.ufs.web.view.GetAnnouncementResp;
+import ru.philit.ufs.web.view.GetAnnouncementsReq;
+import ru.philit.ufs.web.view.GetAnnouncementsResp;
+import ru.philit.ufs.web.view.GetCommissionReq;
+import ru.philit.ufs.web.view.GetCommissionResp;
 
 /**
  * Контроллер действий с объявлениями на взнос наличных.

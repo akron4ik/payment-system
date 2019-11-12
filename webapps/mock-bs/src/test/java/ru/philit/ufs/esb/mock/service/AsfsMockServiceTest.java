@@ -1,14 +1,14 @@
 package ru.philit.ufs.esb.mock.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.philit.ufs.esb.mock.client.EsbClient;
 import ru.philit.ufs.model.cache.MockCache;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class AsfsMockServiceTest {
 
@@ -32,27 +32,28 @@ public class AsfsMockServiceTest {
 
   @Test
   public void testProcessMessage_SrvCreateCashOrderRq() throws Exception {
-    String requestMessage = "<SrvCreateCashOrderRq><HeaderInfo/><SrvCreateCashOrderRqMessage/></SrvCreateCashOrderRq>";
+    String requestMessage = "<SrvCreateCashOrderRq><HeaderInfo/>"
+        + "<SrvCreateCashOrderRqMessage/></SrvCreateCashOrderRq>";
     assertTrue(service.processMessage(requestMessage));
   }
 
   @Test
   public void testProcessMessage_SrvUpdStCashOrderRq() throws Exception {
 
-    String requestMessage = "<SrvUpdStCashOrderRq><HeaderInfo/>" +
-        "<SrvUpdCashOrderRqMessage>" +
-        "<cashOrderId>12345" +
-        "</cashOrderId>" +
-        "<cashOrderStatus>Committed</cashOrderStatus>" +
-        "</SrvUpdCashOrderRqMessage>" +
-        "</SrvUpdStCashOrderRq>";
+    String requestMessage = "<SrvUpdStCashOrderRq><HeaderInfo/>"
+        + "<SrvUpdCashOrderRqMessage>"
+        + "<cashOrderId>12345"
+        + "</cashOrderId>"
+        + "<cashOrderStatus>Committed</cashOrderStatus>"
+        + "</SrvUpdCashOrderRqMessage>"
+        + "</SrvUpdStCashOrderRq>";
     assertTrue(service.processMessage(requestMessage));
   }
 
   @Test
   public void testProcessMessage_SrvGetWorkPlaceInfoRq() throws Exception {
-    String requestMessage = "<SrvGetWorkPlaceInfoRq><HeaderInfo/>" +
-        "<SrvGetWorkPlaceInfoRqMessage/></SrvGetWorkPlaceInfoRq>";
+    String requestMessage = "<SrvGetWorkPlaceInfoRq><HeaderInfo/>"
+        + "<SrvGetWorkPlaceInfoRqMessage/></SrvGetWorkPlaceInfoRq>";
     assertTrue(service.processMessage(requestMessage));
   }
 

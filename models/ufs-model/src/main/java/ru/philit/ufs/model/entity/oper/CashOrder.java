@@ -51,7 +51,7 @@ public class CashOrder extends ExternalEntity implements Serializable {
   private String userLogin;
   private boolean clientTypeFk;
   private String operationId;
-  private Representative repData;
+  private Representative representative;
   private String legalEntityShortName;
 
 }

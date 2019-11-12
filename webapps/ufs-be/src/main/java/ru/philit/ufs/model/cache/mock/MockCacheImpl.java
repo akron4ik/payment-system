@@ -9,7 +9,8 @@ import ru.philit.ufs.model.entity.account.Card;
 import ru.philit.ufs.model.entity.account.CardNetworkCode;
 import ru.philit.ufs.model.entity.account.CardType;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.Operation;
+import ru.philit.ufs.model.entity.oper.OperationStatus;
 import ru.philit.ufs.model.entity.user.User;
 import ru.philit.ufs.util.UuidUtils;
 

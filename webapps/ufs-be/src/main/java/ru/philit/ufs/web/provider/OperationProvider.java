@@ -1,20 +1,25 @@
 package ru.philit.ufs.web.provider;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.cache.OperationCache;
 import ru.philit.ufs.model.entity.account.Representative;
-import ru.philit.ufs.model.entity.oper.*;
+import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashOrderStatus;
+import ru.philit.ufs.model.entity.oper.CashOrderType;
+import ru.philit.ufs.model.entity.oper.Operation;
+import ru.philit.ufs.model.entity.oper.OperationPackage;
+import ru.philit.ufs.model.entity.oper.OperationPackageRequest;
+import ru.philit.ufs.model.entity.oper.OperationTask;
+import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
+import ru.philit.ufs.model.entity.oper.OperationTaskStatus;
+import ru.philit.ufs.model.entity.oper.OperationTasksRequest;
+
 import ru.philit.ufs.model.entity.user.ClientInfo;
-import ru.philit.ufs.model.entity.user.Operator;
-import ru.philit.ufs.model.entity.user.Workplace;
-import ru.philit.ufs.model.entity.user.WorkplaceType;
 import ru.philit.ufs.util.UuidUtils;
 import ru.philit.ufs.web.exception.InvalidDataException;
 

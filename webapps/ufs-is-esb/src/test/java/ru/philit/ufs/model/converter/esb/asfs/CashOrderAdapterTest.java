@@ -2,34 +2,42 @@ package ru.philit.ufs.model.converter.esb.asfs;
 
 import static ru.philit.ufs.model.entity.oper.CashOrderStatus.CREATED;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.philit.ufs.model.entity.account.Representative;
-import ru.philit.ufs.model.entity.esb.asfs.*;
-import ru.philit.ufs.model.entity.esb.pprb.SrvGetRepByCardRs;
+import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvUpdStCashOrderRq;
+import ru.philit.ufs.model.entity.esb.asfs.SrvUpdStCashOrderRs;
 import ru.philit.ufs.model.entity.oper.CashOrder;
-import ru.philit.ufs.model.entity.oper.CashOrderStatus;
 import ru.philit.ufs.model.entity.oper.CashOrderType;
 import ru.philit.ufs.model.entity.oper.CashSymbol;
 import ru.philit.ufs.model.entity.user.Subbranch;
 import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.model.entity.user.WorkplaceType;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
 
   private static final String FIX_UUID = "a55ed415-3976-41f7-916c-4c17ca79e969";
+
   private CashOrder cashOrder;
   private Workplace workplace;
   private SrvCreateCashOrderRs response1;
   private SrvUpdStCashOrderRs response2;
   private SrvGetWorkPlaceInfoRs response3;
 
+  /**
+   * Set up test data.
+   */
   @Before
   public void setUp() {
     cashOrder = new CashOrder();
@@ -75,7 +83,7 @@ public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
     repData.setLastName("Ivanov");
     repData.setId("1");
     repData.setResident(false);
-    cashOrder.setRepData(repData);
+    cashOrder.setRepresentative(repData);
 
     workplace = new Workplace();
     workplace.setId("123");
@@ -111,8 +119,10 @@ public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
     response1.getSrvCreateCashOrderRsMessage().getKO1().setSenderBankBIC("77777");
     response1.getSrvCreateCashOrderRsMessage().getKO1().setLegalEntityShortName("OOO");
     response1.getSrvCreateCashOrderRsMessage().getKO1().setRepFIO("Ivanov Ivan Ivanovich");
-    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols cashSymbols1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols();
-    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem cashSymbolItem1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem();
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols cashSymbols1
+        = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols();
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem cashSymbolItem1
+        = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1.CashSymbols.CashSymbolItem();
     cashSymbolItem1.setCashSymbol("A");
     cashSymbolItem1.setCashSymbolAmount(BigDecimal.TEN);
     cashSymbols1.getCashSymbolItem().add(cashSymbolItem1);
@@ -189,7 +199,6 @@ public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
         response1.getSrvCreateCashOrderRsMessage().getKO1().getAccountId());
     Assert.assertEquals(cashOrder.getAmount(),
         response1.getSrvCreateCashOrderRsMessage().getKO1().getAmount());
-
   }
 
   @Test
@@ -217,4 +226,36 @@ public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
     Assert.assertEquals(workplace.getType().code(),
         response3.getSrvGetWorkPlaceInfoRsMessage().getWorkPlaceType().intValue());
   }
+
+  @Test
+  public void testRequestCreateCashOrderMapStruct() {
+    SrvCreateCashOrderRq request = CashOrderAdapter.requestCreateOrderMapStruct(cashOrder);
+    assertHeaderInfo(headerInfo());
+    Assert.assertNotNull(request.getSrvCreateCashOrderRqMessage());
+    Assert.assertEquals(request.getSrvCreateCashOrderRqMessage().getAccountId(),
+        cashOrder.getAccountId());
+    Assert.assertEquals(request.getSrvCreateCashOrderRqMessage().getCashOrderId(),
+        cashOrder.getCashOrderId());
+  }
+
+  @Test
+  public void testRequestUpdStCashOrderMapStruct() {
+    SrvUpdStCashOrderRq request = CashOrderAdapter.requestUpdStCashOrderMapStruct(cashOrder);
+    assertHeaderInfo(headerInfo());
+    Assert.assertNotNull(request.getSrvUpdCashOrderRqMessage());
+    Assert.assertEquals(request.getSrvUpdCashOrderRqMessage().getCashOrderId(), "12345");
+    Assert.assertEquals(request.getSrvUpdCashOrderRqMessage().getCashOrderStatus(),
+        CashOrderStatusType.CREATED);
+  }
+
+  @Test
+  public void testRequestGetWorkPlaceInfoMapStruct() {
+    SrvGetWorkPlaceInfoRq request =
+        CashOrderAdapter.requestGetWorkPlaceInfoMapStruct("123");
+    assertHeaderInfo(headerInfo());
+    Assert.assertNotNull(request.getSrvGetWorkPlaceInfoRqMessage());
+    Assert.assertEquals(request.getSrvGetWorkPlaceInfoRqMessage().getWorkPlaceUId(), "123");
+  }
+
+
 }

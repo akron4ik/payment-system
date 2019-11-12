@@ -16,8 +16,7 @@ public interface AnnouncementMapper {
 
   String asDto(BigDecimal in);
 
-  List<AnnouncementDto> asAnnouncementDto(List<CashDepositAnnouncement> in);
-
   WorkplaceDto asDto(Workplace in);
 
+  List<AnnouncementDto> asAnnouncementDto(List<CashDepositAnnouncement> in);
 }

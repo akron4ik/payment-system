@@ -24,7 +24,7 @@ public abstract class CommonAdapter {
     return (number != null) ? BigInteger.valueOf(number) : null;
   }
 
-  protected static Integer integerValue(BigInteger bigInteger){
+  protected static Integer integerValue(BigInteger bigInteger) {
     return (bigInteger != null) ? bigInteger.intValue() : null;
   }
 

@@ -47,8 +47,8 @@ public class HazelcastMockCacheImplTest {
   private IMap<Long, Map<Long, String>> tasksAccountDepositByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksAccountWithdrawByPackageId = new MockIMap<>();
   private IMap<Long, Map<Long, String>> tasksCheckbookIssuingByPackageId = new MockIMap<>();
-  private IMap<Date, Map<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>> cashOrders = new MockIMap<>();
-  //private IMap<String, BigDecimal> checkOverLimit = new MockIMap<>();
+  private IMap<Date, Map<String, SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1>> cashOrders =
+      new MockIMap<>();
   private IMap<Long, PkgTaskStatusType> taskStatuses = new MockIMap<>();
   private IMap<Long, OperationPackageInfo> packageById = new MockIMap<>();
   private IMap<String, Long> packageIdByInn = new MockIMap<>();
@@ -74,7 +74,6 @@ public class HazelcastMockCacheImplTest {
     when(hazelcastMockServer.getPackageById()).thenReturn(packageById);
     when(hazelcastMockServer.getPackageIdByInn()).thenReturn(packageIdByInn);
     when(hazelcastMockServer.getCashOrders()).thenReturn(cashOrders);
-    //when(hazelcastMockServer.getCheckOverLimit()).thenReturn(checkOverLimit);
   }
 
   @Test
@@ -121,7 +120,8 @@ public class HazelcastMockCacheImplTest {
   @Test
   public void createCashOrder() throws Exception {
     //given
-    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 =
+        new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
     String cashOrderId = "12345";
     Date day = new Date();
     //when
@@ -132,7 +132,8 @@ public class HazelcastMockCacheImplTest {
 
   @Test
   public void updCashOrderSt() throws Exception {
-    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 =
+        new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
     Date day = new Date();
     GregorianCalendar calendar = new GregorianCalendar();
     calendar.setTime(day);
@@ -152,7 +153,8 @@ public class HazelcastMockCacheImplTest {
 
   @Test
   public void checkOverLimit() {
-    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 = new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
+    SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1 ko1 =
+        new SrvCreateCashOrderRs.SrvCreateCashOrderRsMessage.KO1();
     ko1.setCashOrderId("123456");
     ko1.setCashOrderStatus(CashOrderStatusType.CREATED);
     ko1.setAmount(BigDecimal.valueOf(1000));

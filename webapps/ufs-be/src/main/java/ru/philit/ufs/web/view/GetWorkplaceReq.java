@@ -10,5 +10,5 @@ import ru.philit.ufs.web.dto.BaseRequest;
 @Setter
 @SuppressWarnings("serial")
 public class GetWorkplaceReq extends BaseRequest {
-    private String workplaceId;
+  private String workplaceId;
 }

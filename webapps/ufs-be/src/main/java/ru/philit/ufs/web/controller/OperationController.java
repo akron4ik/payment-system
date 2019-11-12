@@ -119,15 +119,4 @@ public class OperationController {
     List<OperationTaskCardDeposit> tasks = provider.getForwardedDepositTasks(clientInfo);
     return new GetTasksForwardedResp().withSuccess(mapper.asDto(tasks));
   }
-
-  /**
-   * Получение данных по рабочему месту и лимитов по операциям.
-   *
-   * @param clientInfo информация о клиенте
-   */
-  /*@RequestMapping(value = "/workplace", method = RequestMethod.POST)
-  public GetWorkplaceResp getWorkplace(@RequestBody GetWorkplaceReq workplaceReq,  ClientInfo clientInfo) {
-    Workplace workplace = provider.getWorkplaceInfo(workplaceReq.getWorkplaceId(), clientInfo);
-    return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
-  }*/
 }

@@ -20,6 +20,9 @@ public class CheckOverAdapterTest extends AsfsAdapterBaseTest {
   private CheckOverLimitRequest checkOverLimitRequest;
   private SrvCheckOverLimitRs response;
 
+  /**
+   * Set up test data.
+   */
   @Before
   public void setUp() {
     checkOverLimitRequest = new CheckOverLimitRequest();
@@ -38,6 +41,20 @@ public class CheckOverAdapterTest extends AsfsAdapterBaseTest {
   @Test
   public void testRequestCheckOverLimit() {
     SrvCheckOverLimitRq request = CheckOverAdapter.requestByParams(checkOverLimitRequest);
+    assertHeaderInfo(request.getHeaderInfo());
+    Assert.assertNotNull(request.getSrvCheckOverLimitRqMessage());
+    Assert.assertEquals(request.getSrvCheckOverLimitRqMessage().getAmount(),
+        checkOverLimitRequest.getAmount());
+    Assert.assertEquals(request.getSrvCheckOverLimitRqMessage().getUserLogin(),
+        checkOverLimitRequest.getUserLogin());
+    Assert.assertEquals(request.getSrvCheckOverLimitRqMessage().isTobeIncreased(),
+        checkOverLimitRequest.isTobeIncreased());
+  }
+
+  @Test
+  public void testRequestCheckOverLimitMapStruct() {
+    SrvCheckOverLimitRq request = CheckOverAdapter
+        .requestCheckOverLimitMapStruct(checkOverLimitRequest);
     assertHeaderInfo(request.getHeaderInfo());
     Assert.assertNotNull(request.getSrvCheckOverLimitRqMessage());
     Assert.assertEquals(request.getSrvCheckOverLimitRqMessage().getAmount(),
