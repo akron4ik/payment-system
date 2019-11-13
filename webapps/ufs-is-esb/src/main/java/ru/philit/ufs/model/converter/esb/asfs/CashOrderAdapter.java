@@ -272,4 +272,33 @@ public class CashOrderAdapter extends AsfsAdapter {
     return request;
   }
 
+  /**
+   * Конвертируем ответ в кассовый ордер.
+   */
+  public static CashOrder convertMapStruct(SrvCreateCashOrderRs response) {
+    CashOrder cashOrder = mapper.covertCreateCashOrder(response
+        .getSrvCreateCashOrderRsMessage().getKO1());
+    map(response.getHeaderInfo(), cashOrder);
+    return cashOrder;
+  }
+
+  /**
+   * Конвертируем ответ в кассовый ордер.
+   */
+  public static CashOrder convertMapStruct(SrvUpdStCashOrderRs response) {
+    CashOrder cashOrder = mapper.convertUpdStCashOrder(response.getSrvUpdCashOrderRsMessage());
+    map(response.getHeaderInfo(), cashOrder);
+    return cashOrder;
+  }
+
+  /**
+   * Конвертируем ответ в рабочее место.
+   */
+  public static Workplace convertMapStruct(SrvGetWorkPlaceInfoRs response) {
+    Workplace workplace = mapper
+        .convertGetWorkPlaceInfo(response.getSrvGetWorkPlaceInfoRsMessage());
+    map(response.getHeaderInfo(), workplace);
+    return workplace;
+  }
+
 }

@@ -66,6 +66,13 @@ public class CheckOverAdapterTest extends AsfsAdapterBaseTest {
   }
 
   @Test
+  public void testConverterCheckOverMapStruct() {
+    ExternalEntityContainer<Boolean> container = CheckOverAdapter.convertMapStruct(response);
+    assertHeaderInfo(container, FIX_UUID);
+    Assert.assertEquals(container.getData(), true);
+  }
+
+  @Test
   public void testConvertCheckOverLimitRs() {
     ExternalEntityContainer<Boolean> container = CheckOverAdapter.convert(response);
     assertHeaderInfo(container, FIX_UUID);

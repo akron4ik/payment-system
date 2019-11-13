@@ -257,5 +257,43 @@ public class CashOrderAdapterTest extends AsfsAdapterBaseTest {
     Assert.assertEquals(request.getSrvGetWorkPlaceInfoRqMessage().getWorkPlaceUId(), "123");
   }
 
+  @Test
+  public void testConverterCreateCashOrderMapStruct() {
+    CashOrder cashOrder = CashOrderAdapter.convertMapStruct(response1);
+    System.out.println(cashOrder);
+    System.out.println(response1.getHeaderInfo());
+    assertHeaderInfo(cashOrder, FIX_UUID);
+    Assert.assertEquals(cashOrder.getAccountId(),
+        response1.getSrvCreateCashOrderRsMessage().getKO1().getAccountId());
+    Assert.assertEquals(cashOrder.getAmount(),
+        response1.getSrvCreateCashOrderRsMessage().getKO1().getAmount());
+  }
+
+  @Test
+  public void testConverterUpdStMapStruct() {
+    CashOrder cashOrder = CashOrderAdapter.convertMapStruct(response2);
+    assertHeaderInfo(cashOrder, FIX_UUID);
+    Assert.assertEquals(cashOrder.getCashOrderINum(),
+        response2.getSrvUpdCashOrderRsMessage().getCashOrderINum());
+    Assert
+        .assertEquals(cashOrder.getCashOrderStatus().code(), CashOrderStatusType.COMMITTED.value());
+  }
+
+  @Test
+  public void testConverterGetWorkPlaceInfoMapStruct() {
+    Workplace workplace = CashOrderAdapter.convertMapStruct(response3);
+    assertHeaderInfo(workplace, FIX_UUID);
+    Assert.assertEquals(workplace.getAmount(),
+        response3.getSrvGetWorkPlaceInfoRsMessage().getAmount());
+    Assert.assertEquals(workplace.getLimit(),
+        response3.getSrvGetWorkPlaceInfoRsMessage().getWorkPlaceLimit());
+    Assert.assertEquals(workplace.getCashboxDeviceType(),
+        response3.getSrvGetWorkPlaceInfoRsMessage().getCashboxDeviceType());
+    Assert.assertEquals(workplace.getSubbranchCode(),
+        response3.getSrvGetWorkPlaceInfoRsMessage().getSubbranchCode());
+    Assert.assertEquals(workplace.getType().code(),
+        response3.getSrvGetWorkPlaceInfoRsMessage().getWorkPlaceType().intValue());
+  }
+
 
 }

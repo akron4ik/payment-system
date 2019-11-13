@@ -62,4 +62,13 @@ public class CheckOverAdapter extends AsfsAdapter {
     return request;
   }
 
+  /**
+  * Преобразует транспортный объект ответа во внутреннюю сущность.
+  */
+  public static ExternalEntityContainer<Boolean> convertMapStruct(SrvCheckOverLimitRs response) {
+    ExternalEntityContainer<Boolean> container = mapper
+        .convertCheckOverLimit(response.getSrvCheckOverLimitRsMessage());
+    map(response.getHeaderInfo(), container);
+    return container;
+  }
 }

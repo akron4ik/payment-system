@@ -2,28 +2,21 @@ package ru.philit.ufs.model.converter.esb.asfs;
 
 import static ru.philit.ufs.model.entity.esb.asfs.LimitStatusType.LIMIT_PASSED;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
-import ru.philit.ufs.model.entity.esb.asfs.CashOrderStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.LimitStatusType;
 import ru.philit.ufs.model.entity.esb.asfs.OperTypeLabel;
-import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRq;
-import ru.philit.ufs.model.entity.esb.asfs.SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage.AdditionalInfo.CashSymbols.CashSymbolItem;
-import ru.philit.ufs.model.entity.oper.CashOrderStatus;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRs;
+import ru.philit.ufs.model.entity.esb.asfs.SrvGetWorkPlaceInfoRs.SrvGetWorkPlaceInfoRsMessage.WorkPlaceOperationTypeLimit;
 import ru.philit.ufs.model.entity.oper.CashOrderType;
-import ru.philit.ufs.model.entity.oper.CashSymbol;
+import ru.philit.ufs.model.entity.oper.OperationTypeLimit;
+import ru.philit.ufs.model.entity.user.WorkplaceType;
 
 public class CashOrderMappers {
-  protected static CashOrderStatusType map(CashOrderStatus cashOrderStatus) {
-    return (cashOrderStatus != null) ? CashOrderStatusType.fromValue(cashOrderStatus.code()) : null;
-  }
-
-  protected static CashOrderStatus map(CashOrderStatusType cashOrderStatus) {
-    return (cashOrderStatus != null) ? CashOrderStatus.valueOf(cashOrderStatus.value()) : null;
-  }
 
   protected static CashOrderType map(
       ru.philit.ufs.model.entity.esb.asfs.CashOrderType cashOrderType) {
@@ -43,19 +36,31 @@ public class CashOrderMappers {
     return (xmlCalendar != null) ? xmlCalendar.toGregorianCalendar().getTime() : null;
   }
 
-  protected static List<SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage
-      .AdditionalInfo.CashSymbols.CashSymbolItem> map(List<CashSymbol> cashSymbols) {
-    List<SrvCreateCashOrderRq.SrvCreateCashOrderRqMessage
-        .AdditionalInfo.CashSymbols.CashSymbolItem> list = new ArrayList<>();
-    if (cashSymbols != null) {
-      for (CashSymbol cashSymbol: cashSymbols) {
-        CashSymbolItem cashSymbolItem = new CashSymbolItem();
-        cashSymbolItem.setCashSymbol(cashSymbol.getCode());
-        cashSymbolItem.setCashSymbolAmount(cashSymbol.getAmount());
-        list.add(cashSymbolItem);
+  protected static List<OperationTypeLimit> map(List<SrvGetWorkPlaceInfoRs
+      .SrvGetWorkPlaceInfoRsMessage.WorkPlaceOperationTypeLimit.OperationTypeLimitItem> list) {
+    List<OperationTypeLimit> newList = new ArrayList<>();
+    if (list != null) {
+      for (WorkPlaceOperationTypeLimit.OperationTypeLimitItem operationTypeLimitItem : list) {
+        OperationTypeLimit operationTypeLimit = new OperationTypeLimit();
+        operationTypeLimit.setCategoryId(operationTypeLimitItem.getOperationCategory().toString());
+        operationTypeLimit.setLimit(operationTypeLimitItem.getOperationLimit());
+        newList.add(operationTypeLimit);
       }
     }
-    return list;
+    return newList;
+  }
+
+  protected static WorkplaceType map(BigInteger value) {
+    switch (value.intValue()) {
+      case 0:
+        return WorkplaceType.CASHBOX;
+      case 1:
+        return WorkplaceType.UWP;
+      case 2:
+        return WorkplaceType.OTHER;
+      default:
+        return null;
+    }
   }
 
 }
