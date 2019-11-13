@@ -17,8 +17,10 @@ import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
 import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.User;
+import ru.philit.ufs.web.dto.CashOrderDto;
 import ru.philit.ufs.web.dto.OperationJournalDto;
 import ru.philit.ufs.web.mapping.OperationJournalMapper;
+import ru.philit.ufs.web.mapping.OperationMapper;
 import ru.philit.ufs.web.provider.ReportProvider;
 import ru.philit.ufs.web.provider.RepresentativeProvider;
 import ru.philit.ufs.web.view.GetCashBookReq;
@@ -36,6 +38,7 @@ public class ReportController {
   private final ReportProvider reportProvider;
   private final RepresentativeProvider representativeProvider;
   private final OperationJournalMapper operationJournalMapper;
+  private final OperationMapper operationMapper;
 
   /**
    * Конструктор бина.
@@ -44,11 +47,13 @@ public class ReportController {
   public ReportController(
       ReportProvider reportProvider,
       RepresentativeProvider representativeProvider,
-      OperationJournalMapper operationJournalMapper
+      OperationJournalMapper operationJournalMapper,
+      OperationMapper operationMapper
   ) {
     this.reportProvider = reportProvider;
     this.representativeProvider = representativeProvider;
     this.operationJournalMapper = operationJournalMapper;
+    this.operationMapper = operationMapper;
   }
 
   /**
@@ -100,9 +105,18 @@ public class ReportController {
     return new GetOperationJournalResp().withSuccess(items);
   }
 
+  /**
+   * Получение кассовой книги.
+   *
+   * @param request    параметры запроса списка
+   * @return список записей
+   */
   @RequestMapping(value = "/cashBook", method = RequestMethod.POST)
-  public GetCashBookResp getCashBook(@RequestBody GetCashBookReq request, ClientInfo clientInfo) {
-    CashOrder cashOrder = reportProvider.getCashBook(request.getCashOrderId(), clientInfo);
-    return new GetCashBookResp().withSuccess(cashOrder);
+  public GetCashBookResp getCashBook(@RequestBody GetCashBookReq request) {
+    List<CashOrderDto> list = new ArrayList<>(operationMapper.asDto(reportProvider.getCashBook(
+        request.getCashOrderId(),
+        request.getAccountId(), request.getWorkPlaceUid())));
+
+    return new GetCashBookResp().withSuccess(list);
   }
 }

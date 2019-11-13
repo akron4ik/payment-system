@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTaskCardDeposit;
@@ -49,7 +50,8 @@ public class OperationController {
       @RequestBody AddTaskToPackageReq request, ClientInfo clientInfo
   ) {
     OperationPackage packageWithTask = provider.addActiveDepositTask(
-        request.getWorkplaceId(), mapper.asEntity(request.getDeposit()), clientInfo
+        request.getWorkplaceId(), mapper.asEntity(request.getCashOrderDto()),
+        mapper.asEntity(request.getDeposit()), clientInfo
     );
     return new AddTaskToPackageResp().withSuccess(mapper.asDto(packageWithTask));
   }
@@ -66,7 +68,8 @@ public class OperationController {
       @RequestBody AddTaskToPackageReq request, ClientInfo clientInfo
   ) {
     OperationPackage packageWithTask = provider.addForwardedDepositTask(
-        request.getWorkplaceId(), mapper.asEntity(request.getDeposit()), clientInfo
+        request.getWorkplaceId(), mapper.asEntity(request.getCashOrderDto()),
+        mapper.asEntity(request.getDeposit()), clientInfo
     );
     return new AddTaskToPackageResp().withSuccess(mapper.asDto(packageWithTask));
   }
@@ -84,7 +87,7 @@ public class OperationController {
   ) {
     Operation operation = provider.confirmOperation(
         mapper.asEntity(request.getPackageId()), mapper.asEntity(request.getTaskId()),
-        request.getWorkplaceId(), request.getCashOrderId(),
+        request.getWorkplaceId(), mapper.asEntity(request.getCashOrderDto()),
         request.getOperationTypeCode(), clientInfo
     );
     return new FinishOperationResp().withSuccess(mapper.asDto(operation));
@@ -119,4 +122,6 @@ public class OperationController {
     List<OperationTaskCardDeposit> tasks = provider.getForwardedDepositTasks(clientInfo);
     return new GetTasksForwardedResp().withSuccess(mapper.asDto(tasks));
   }
+
+
 }

@@ -11,7 +11,16 @@ import ru.philit.ufs.web.dto.BaseRequest;
 @SuppressWarnings("serial")
 public class GetCashBookReq extends BaseRequest {
 
+  /**
+   * Идентификатор кассового ордера.
+   */
   private String cashOrderId;
-  private String operator;
-  private String amount;
+  /**
+   * Аккаунт в кассовом ордере.
+   */
+  private String accountId;
+  /**
+   * Идентификатор рабочего места в кассовом ордере.
+   */
+  private String workPlaceUid;
 }

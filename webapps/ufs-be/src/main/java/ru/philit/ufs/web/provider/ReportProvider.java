@@ -2,8 +2,11 @@ package ru.philit.ufs.web.provider;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -138,9 +141,35 @@ public class ReportProvider {
         : null;
   }
 
-  public CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo) {
-    return (cashOrderId != null && clientInfo != null) ? operationCache
-        .getCashBook(cashOrderId, clientInfo) : null;
-  }
+  /**
+   * Получение касового журнала.
 
+   * @param accountId  номер счёта
+   * @param cashOrderId     номер кассового орднра
+   * @param workPlaceUId  номер рабочего места
+
+   * @return значение комиссии
+   */
+  public List<CashOrder> getCashBook(String cashOrderId, String accountId, String workPlaceUId) {
+    if (cashOrderId != null) {
+      return Collections.singletonList(operationCache.getCashBookByCashOrderId(cashOrderId));
+    } else if (accountId != null) {
+      List<CashOrder> list = new ArrayList<>();
+      for (CashOrder cashOrder: operationCache.getCashBook()) {
+        if (cashOrder.getAccountId().equals(accountId)) {
+          list.add(cashOrder);
+        }
+      }
+      return list;
+    } else if (workPlaceUId != null) {
+      List<CashOrder> list1 = new ArrayList<>();
+      for (CashOrder cashOrder: operationCache.getCashBook()) {
+        if (cashOrder.getWorkPlaceUId().equals(workPlaceUId)) {
+          list1.add(cashOrder);
+        }
+      }
+      return list1;
+    }
+    return  operationCache.getCashBook();
+  }
 }

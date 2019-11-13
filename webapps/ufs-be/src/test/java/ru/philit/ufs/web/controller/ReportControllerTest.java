@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import ru.philit.ufs.model.entity.account.Representative;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
+import ru.philit.ufs.model.entity.oper.CashOrder;
 import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTask;
@@ -28,11 +29,16 @@ import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.Subbranch;
 import ru.philit.ufs.model.entity.user.User;
+import ru.philit.ufs.web.dto.CashOrderDto;
 import ru.philit.ufs.web.dto.OperationJournalDto;
 import ru.philit.ufs.web.mapping.OperationJournalMapper;
+import ru.philit.ufs.web.mapping.OperationMapper;
 import ru.philit.ufs.web.mapping.impl.OperationJournalMapperImpl;
+import ru.philit.ufs.web.mapping.impl.OperationMapperImpl;
 import ru.philit.ufs.web.provider.ReportProvider;
 import ru.philit.ufs.web.provider.RepresentativeProvider;
+import ru.philit.ufs.web.view.GetCashBookReq;
+import ru.philit.ufs.web.view.GetCashBookResp;
 import ru.philit.ufs.web.view.GetOperationJournalReq;
 import ru.philit.ufs.web.view.GetOperationJournalResp;
 
@@ -44,6 +50,8 @@ public class ReportControllerTest extends RestControllerTest {
   private RepresentativeProvider representativeProvider;
   @Spy
   private OperationJournalMapper operationJournalMapper = new OperationJournalMapperImpl();
+  @Spy
+  private OperationMapper operationMapper = new OperationMapperImpl();
 
   /**
    * Set up test controller.
@@ -52,7 +60,7 @@ public class ReportControllerTest extends RestControllerTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     standaloneSetup(new ReportController(reportProvider, representativeProvider,
-        operationJournalMapper));
+        operationJournalMapper, operationMapper));
   }
 
   @Test
@@ -111,4 +119,31 @@ public class ReportControllerTest extends RestControllerTest {
     assertNotNull(controlDto.getRepresentative());
     //assertEquals(controlDto.getRepresentative().getFullName(), "Петров Петр Петрович");
   }
+
+  /*@Test
+  public void testGetCasbook() throws Exception {
+    GetCashBookReq request = new GetCashBookReq();
+    request.setCashOrderId("12345");
+    request.setAccountId("54321");
+    request.setWorkPlaceUid("987654");
+
+    CashOrder cashOrder = new CashOrder();
+    cashOrder.setCashOrderId("12345");
+    cashOrder.setAccountId("54321");
+    cashOrder.setWorkPlaceUId("987654");
+    cashOrder.setAmount(BigDecimal.valueOf(1000));
+
+    when(reportProvider.getCashBook("12345", null, "987654"))
+        .thenReturn(Collections.singletonList(cashOrder));
+
+    String responseJson = performAndGetContent(post("/report/cashBook")
+        .content(toRequest(request)));
+    GetCashBookResp response = toResponse(responseJson, GetCashBookResp.class);
+    assertNotNull(response.getData());
+    assertTrue(response.getData() instanceof List);
+    assertEquals(((List)response.getData()).size(), 1);
+    assertEquals(((List)response.getData()).get(0).getClass(), CashOrderDto.class);
+
+
+  }*/
 }

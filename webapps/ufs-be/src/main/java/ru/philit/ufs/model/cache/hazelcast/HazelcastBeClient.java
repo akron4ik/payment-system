@@ -153,7 +153,7 @@ public class HazelcastBeClient {
   @Getter
   private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
   @Getter
-  private IMap<LocalKey<String>, CashOrder> cashBookMap;
+  private IMap<String, CashOrder> cashBookMap;
 
   @Autowired
   public HazelcastBeClient(

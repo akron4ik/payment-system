@@ -30,7 +30,11 @@ import com.google.common.collect.Iterables;
 import com.hazelcast.core.IMap;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import javafx.print.Collation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.philit.ufs.model.cache.AccountCache;
@@ -317,17 +321,23 @@ public class HazelcastCacheImpl
   }
 
   @Override
-  public CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo) {
-    return requestData(cashOrderId, client.getCashBookMap(), CASH_BOOK, clientInfo);
+  public void addCashOrderToCashBook(CashOrder cashOrder) {
+    if (cashOrder != null && cashOrder.getCashOrderStatus().equals(CashOrderStatus.COMMITTED)) {
+      client.getCashBookMap().put(cashOrder.getCashOrderId(), cashOrder);
+    }
   }
 
   @Override
-  public void addCoToCashBook(CashOrder cashOrder, ClientInfo clientInfo) {
-    LocalKey<String> localKey = new LocalKey<>(clientInfo.getSessionId(),
-        cashOrder.getCashOrderId());
-    if (cashOrder.getCashOrderStatus().equals(CashOrderStatus.COMMITTED)) {
-      client.getCashBookMap().put(localKey, cashOrder);
+  public CashOrder getCashBookByCashOrderId(String cashOrderId) {
+    if (cashOrderId != null && client.getCashBookMap().containsKey(cashOrderId)) {
+      return client.getCashBookMap().get(cashOrderId);
     }
+    return null;
+  }
+
+  @Override
+  public List<CashOrder> getCashBook() {
+    return new ArrayList<>(client.getCashBookMap().values());
   }
 
   private <K extends Serializable, V> V requestData(

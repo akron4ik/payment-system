@@ -1,5 +1,6 @@
 package ru.philit.ufs.model.cache;
 
+import java.util.Collection;
 import java.util.List;
 
 import ru.philit.ufs.model.entity.oper.CashOrder;
@@ -35,8 +36,10 @@ public interface OperationCache {
 
   CashOrder updCashOrder(CashOrder cashOrder, ClientInfo clientInfo);
 
-  CashOrder getCashBook(String cashOrderId, ClientInfo clientInfo);
+  void addCashOrderToCashBook(CashOrder cashOrder);
 
-  void addCoToCashBook(CashOrder cashOrder, ClientInfo clientInfo);
+  CashOrder getCashBookByCashOrderId(String cashOrderId);
+
+  List<CashOrder> getCashBook();
 
 }

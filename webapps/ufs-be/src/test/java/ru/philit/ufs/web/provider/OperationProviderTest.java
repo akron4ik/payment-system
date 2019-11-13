@@ -44,6 +44,7 @@ public class OperationProviderTest {
   private static final Long TASK_ID = 381935L;
   private static final String TYPE_CODE = OperationTypeCode.TO_CARD_DEPOSIT.code();
   private static final String CASH_ORDER_ID = "12345";
+  private static final CashOrder CASH_ORDER = new CashOrder();
 
   /**
    * Список пакетов операций, считаемых пустыми.
@@ -82,7 +83,7 @@ public class OperationProviderTest {
         .thenReturn(opPackage);
     when(cache.addTasksInPackage(any(OperationPackage.class), any(ClientInfo.class)))
         .thenReturn(opPackage);
-    provider.addActiveDepositTask(WORKPLACE_ID, TASK, CLIENT_INFO);
+    provider.addActiveDepositTask(WORKPLACE_ID, CASH_ORDER, TASK, CLIENT_INFO);
 
     // verify
     verify(cache, times(1))
@@ -97,7 +98,7 @@ public class OperationProviderTest {
   @Test(expected = InvalidDataException.class)
   public void testAddActiveDepositTask_NullWorkplaceId() throws Exception {
     // when
-    provider.addActiveDepositTask(null, TASK, CLIENT_INFO);
+    provider.addActiveDepositTask(null, CASH_ORDER, TASK, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -106,7 +107,16 @@ public class OperationProviderTest {
   @Test(expected = InvalidDataException.class)
   public void testAddActiveDepositTask_NullTask() throws Exception {
     // when
-    provider.addActiveDepositTask(WORKPLACE_ID, null, CLIENT_INFO);
+    provider.addActiveDepositTask(WORKPLACE_ID, CASH_ORDER, null, CLIENT_INFO);
+
+    // verify
+    verifyZeroInteractions(cache);
+  }
+
+  @Test(expected = InvalidDataException.class)
+  public void testAddActiveDepositTask_NullCashOrder() throws Exception {
+    // when
+    provider.addActiveDepositTask(WORKPLACE_ID,null, TASK, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -126,7 +136,7 @@ public class OperationProviderTest {
         .thenReturn(opPackage);
     when(cache.addTasksInPackage(any(OperationPackage.class), any(ClientInfo.class)))
         .thenReturn(opPackage);
-    provider.addActiveDepositTask(WORKPLACE_ID, TASK, CLIENT_INFO);
+    provider.addActiveDepositTask(WORKPLACE_ID, CASH_ORDER, TASK, CLIENT_INFO);
 
     // verify
     /*verify(cache, times(1))
@@ -151,7 +161,7 @@ public class OperationProviderTest {
         .thenReturn(opPackage);
     when(cache.addTasksInPackage(any(OperationPackage.class), any(ClientInfo.class)))
         .thenReturn(opPackage);
-    provider.addForwardedDepositTask(WORKPLACE_ID, TASK, CLIENT_INFO);
+    provider.addForwardedDepositTask(WORKPLACE_ID, CASH_ORDER, TASK, CLIENT_INFO);
 
     // verify
     verify(cache, times(1))
@@ -180,7 +190,7 @@ public class OperationProviderTest {
     doNothing().when(cache)
         .addOperation(anyLong(), any(Operation.class));
     provider
-        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verify(cache, times(1))
@@ -197,7 +207,7 @@ public class OperationProviderTest {
   @Test(expected = InvalidDataException.class)
   public void testConfirmOperationNullPackageId() throws Exception {
     // when
-    provider.confirmOperation(null, TASK_ID, WORKPLACE_ID, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+    provider.confirmOperation(null, TASK_ID, WORKPLACE_ID, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -207,7 +217,7 @@ public class OperationProviderTest {
   public void testConfirmOperationNullTaskId() throws Exception {
     // when
     provider
-        .confirmOperation(PACKAGE_ID, null, WORKPLACE_ID, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+        .confirmOperation(PACKAGE_ID, null, WORKPLACE_ID, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -216,7 +226,7 @@ public class OperationProviderTest {
   @Test(expected = InvalidDataException.class)
   public void testConfirmOperationNullWorkplaceId() throws Exception {
     // when
-    provider.confirmOperation(PACKAGE_ID, TASK_ID, null, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+    provider.confirmOperation(PACKAGE_ID, TASK_ID, null, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -225,7 +235,7 @@ public class OperationProviderTest {
   @Test(expected = InvalidDataException.class)
   public void testConfirmOperationNullTypeCode() throws Exception {
     // when
-    provider.confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER_ID, null, CLIENT_INFO);
+    provider.confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER, null, CLIENT_INFO);
 
     // verify
     verifyZeroInteractions(cache);
@@ -237,7 +247,7 @@ public class OperationProviderTest {
     when(cache.getTasksInPackage(any(OperationTasksRequest.class), any(ClientInfo.class)))
         .thenReturn(null);
     provider
-        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verify(cache, times(1))
@@ -258,7 +268,7 @@ public class OperationProviderTest {
     doNothing().when(cache)
         .addOperation(anyLong(), any(Operation.class));
     provider
-        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER_ID, TYPE_CODE, CLIENT_INFO);
+        .confirmOperation(PACKAGE_ID, TASK_ID, WORKPLACE_ID, CASH_ORDER, TYPE_CODE, CLIENT_INFO);
 
     // verify
     verify(cache, times(1))
