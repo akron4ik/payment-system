@@ -12,6 +12,8 @@ import ru.philit.ufs.model.entity.user.SessionUser;
 import ru.philit.ufs.model.entity.user.Workplace;
 import ru.philit.ufs.web.mapping.UserMapper;
 import ru.philit.ufs.web.provider.UserProvider;
+import ru.philit.ufs.web.view.GetCheckOverLimitReq;
+import ru.philit.ufs.web.view.GetCheckOverLimitResp;
 import ru.philit.ufs.web.view.GetOperatorResp;
 import ru.philit.ufs.web.view.GetWorkplaceReq;
 import ru.philit.ufs.web.view.GetWorkplaceResp;
@@ -74,5 +76,12 @@ public class UserController {
       ClientInfo clientInfo) {
     Workplace workplace = provider.getWorkplaceInfo(workplaceReq.getWorkplaceId(), clientInfo);
     return new GetWorkplaceResp().withSuccess(mapper.asDto(workplace));
+  }
+
+  @RequestMapping(value = "/checkOverLimit", method = RequestMethod.POST)
+  public GetCheckOverLimitResp getCheckOverLimit(@RequestBody GetCheckOverLimitReq request,
+      ClientInfo clientInfo) {
+    boolean flag = provider.checkOverLimit(mapper.asDecimalEntity(request.getAmount()), clientInfo);
+    return new GetCheckOverLimitResp().withSuccess(flag);
   }
 }

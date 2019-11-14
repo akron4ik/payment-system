@@ -15,12 +15,8 @@ public class GetCashBookReq extends BaseRequest {
    * Идентификатор кассового ордера.
    */
   private String cashOrderId;
-  /**
-   * Аккаунт в кассовом ордере.
-   */
+
   private String accountId;
-  /**
-   * Идентификатор рабочего места в кассовом ордере.
-   */
+
   private String workPlaceUid;
 }

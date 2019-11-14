@@ -177,6 +177,26 @@ public class OperationMapperImpl extends CommonMapperImpl implements OperationMa
     return out;
   }
 
+  @Override
+  public CashOrderDto asDto(CashOrder in) {
+    if (in == null) {
+      return null;
+    }
+    CashOrderDto out = new CashOrderDto();
+
+    out.setId(in.getCashOrderId());
+    out.setCashSymbols(asSymbolDto(in.getCashSymbols()));
+    out.setAccount20202Num(in.getAccount20202Num());
+    out.setSubbranchDto(asDto(in.getSubbranch()));
+    out.setAmount(asDto(in.getAmount()));
+    out.setCashOrderINum(in.getCashOrderINum());
+    out.setCashOrderStatus(in.getCashOrderStatus().value());
+    out.setCurrencyType(in.getCurrencyType());
+    out.setRepresentativeDto(asDto(in.getRepresentative()));
+
+    return out;
+  }
+
   private RepresentativeDto asDto(Representative in) {
     if (in == null) {
       return null;

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +18,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import ru.philit.ufs.model.entity.account.IdentityDocument;
+import ru.philit.ufs.model.entity.account.IdentityDocumentType;
 import ru.philit.ufs.model.entity.account.Representative;
 import ru.philit.ufs.model.entity.common.OperationTypeCode;
 import ru.philit.ufs.model.entity.oper.CashOrder;
+import ru.philit.ufs.model.entity.oper.CashOrderStatus;
 import ru.philit.ufs.model.entity.oper.Operation;
 import ru.philit.ufs.model.entity.oper.OperationPackage;
 import ru.philit.ufs.model.entity.oper.OperationTask;
@@ -120,7 +124,7 @@ public class ReportControllerTest extends RestControllerTest {
     //assertEquals(controlDto.getRepresentative().getFullName(), "Петров Петр Петрович");
   }
 
-  /*@Test
+  @Test
   public void testGetCasbook() throws Exception {
     GetCashBookReq request = new GetCashBookReq();
     request.setCashOrderId("12345");
@@ -130,10 +134,26 @@ public class ReportControllerTest extends RestControllerTest {
     CashOrder cashOrder = new CashOrder();
     cashOrder.setCashOrderId("12345");
     cashOrder.setAccountId("54321");
+    cashOrder.setAccount20202Num("875463");
     cashOrder.setWorkPlaceUId("987654");
     cashOrder.setAmount(BigDecimal.valueOf(1000));
+    cashOrder.setCashOrderStatus(CashOrderStatus.COMMITTED);
+    cashOrder.setCashOrderINum("0000000");
+    cashOrder.setCurrencyType("RUB");
+    Representative representative = new Representative();
+    representative.setLastName("Петров");
+    representative.setFirstName("Петр");
+    representative.setPatronymic("Петрович");
+    IdentityDocument id = new IdentityDocument();
+    id.setType(IdentityDocumentType.PASSPORT);
+    representative.setIdentityDocuments(Collections.singletonList(id));
+    cashOrder.setRepresentative(representative);
+    Subbranch subbranch = new Subbranch("1234", "13", "8593", null, "0102", "1385930102", 1L,
+        "0278000222", "044525225", "ПАО \"Сбербанк\"", "30165465190064106565",
+        "location1", "locationType1");
+    cashOrder.setSubbranch(subbranch);
 
-    when(reportProvider.getCashBook("12345", null, "987654"))
+    when(reportProvider.getCashBook("12345", "54321", "987654"))
         .thenReturn(Collections.singletonList(cashOrder));
 
     String responseJson = performAndGetContent(post("/report/cashBook")
@@ -143,7 +163,5 @@ public class ReportControllerTest extends RestControllerTest {
     assertTrue(response.getData() instanceof List);
     assertEquals(((List)response.getData()).size(), 1);
     assertEquals(((List)response.getData()).get(0).getClass(), CashOrderDto.class);
-
-
-  }*/
+  }
 }

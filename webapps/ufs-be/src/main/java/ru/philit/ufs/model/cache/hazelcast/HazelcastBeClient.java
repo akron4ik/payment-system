@@ -152,6 +152,7 @@ public class HazelcastBeClient {
   private IMap<LocalKey<String>, Workplace> workplaceMap;
   @Getter
   private IMap<LocalKey<CheckOverLimitRequest>, ExternalEntityContainer<Boolean>> checkOverLimitMap;
+
   @Getter
   private IMap<String, CashOrder> cashBookMap;
 

@@ -128,16 +128,11 @@ public class UserProvider {
    *
    * @param clientInfo информация о клиенте
    */
-  public void checkOverLimit(BigDecimal amount, ClientInfo clientInfo) {
-
-    CheckOverLimitRequest check = new CheckOverLimitRequest();
-    check.setAmount(amount);
-    check.setUserLogin(clientInfo.getUser().getLogin());
-
-    if (!cache.checkOverLimit(check, clientInfo)) {
-
-      throw new InvalidDataException("Превышен лимит операций для юзера");
-    }
+  public boolean checkOverLimit(BigDecimal amount, ClientInfo clientInfo) {
+    CheckOverLimitRequest request = new CheckOverLimitRequest();
+    request.setAmount(amount);
+    request.setUserLogin(clientInfo.getUser().getLogin());
+    return cache.checkOverLimit(request,clientInfo);
   }
 
 }

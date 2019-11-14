@@ -24,6 +24,7 @@ import ru.philit.ufs.model.cache.MockCache;
 import ru.philit.ufs.model.cache.UserCache;
 import ru.philit.ufs.model.cache.hazelcast.HazelcastCacheImpl;
 import ru.philit.ufs.model.cache.mock.MockCacheImpl;
+import ru.philit.ufs.model.entity.oper.CheckOverLimitRequest;
 import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.User;
@@ -284,10 +285,15 @@ public class UserProviderTest {
     //provider.checkOverLimit(AMOUNT, CLIENT_INFO);
   }
 
+  @Test
+  public void testCheckOverLimit() {
+    boolean flag = true;
+    when(cache.checkOverLimit(any(), any(ClientInfo.class))).thenReturn(flag);
+  }
+
   private Operator getOperator() {
     Operator operator = new Operator();
     operator.setWorkplaceId(WORKPLACE_ID);
     return operator;
   }
-
 }

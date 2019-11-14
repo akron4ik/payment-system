@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.math.BigDecimal;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -18,11 +19,16 @@ import org.mockito.Spy;
 import ru.philit.ufs.model.entity.user.ClientInfo;
 import ru.philit.ufs.model.entity.user.Operator;
 import ru.philit.ufs.model.entity.user.SessionUser;
+import ru.philit.ufs.model.entity.user.User;
 import ru.philit.ufs.model.entity.user.Workplace;
+import ru.philit.ufs.model.entity.user.WorkplaceType;
 import ru.philit.ufs.web.mapping.UserMapper;
 import ru.philit.ufs.web.mapping.impl.UserMapperImpl;
 import ru.philit.ufs.web.provider.UserProvider;
+import ru.philit.ufs.web.view.GetCheckOverLimitReq;
+import ru.philit.ufs.web.view.GetCheckOverLimitResp;
 import ru.philit.ufs.web.view.GetOperatorResp;
+import ru.philit.ufs.web.view.GetWorkplaceReq;
 import ru.philit.ufs.web.view.GetWorkplaceResp;
 import ru.philit.ufs.web.view.LoginUserReq;
 import ru.philit.ufs.web.view.LoginUserResp;
@@ -89,17 +95,44 @@ public class UserControllerTest extends RestControllerTest {
     verifyNoMoreInteractions(provider);
   }
 
-  /*@Test
+  @Test
   public void testGetWorkplace() throws Exception {
-    when(provider.getWorkplace(any(ClientInfo.class))).thenReturn(new Workplace());
+    GetWorkplaceReq request = new GetWorkplaceReq();
+    request.setWorkplaceId("123");
 
-    String responseJson = performAndGetContent(post("/workplace"));
+    Workplace workplace = new Workplace();
+    workplace.setType(WorkplaceType.UWP);
+    workplace.setId("123");
+    workplace.setCashboxOnBoard(true);
+    workplace.setCurrencyType("RUB");
+    workplace.setAmount(new BigDecimal(100));
+    workplace.setLimit(new BigDecimal(100000));
+
+    when(provider.getWorkplaceInfo(anyString(), any(ClientInfo.class)))
+        .thenReturn(workplace);
+
+    String responseJson = performAndGetContent(post("/workplace").content(toRequest(request)));
     GetWorkplaceResp response = toResponse(responseJson, GetWorkplaceResp.class);
 
     assertTrue(response.isSuccess());
     assertNotNull(response.getData());
 
-    verify(provider, times(1)).getWorkplace(any(ClientInfo.class));
+    verify(provider, times(1)).getWorkplaceInfo(anyString(), any(ClientInfo.class));
     verifyNoMoreInteractions(provider);
-  }*/
+  }
+
+  @Test
+  public void testCheckOverLimit() throws Exception {
+    GetCheckOverLimitReq request = new GetCheckOverLimitReq();
+    request.setAmount("1");
+
+    boolean flag = true;
+    when(provider.checkOverLimit(any(BigDecimal.class), any(ClientInfo.class))).thenReturn(flag);
+
+    String responseJson = performAndGetContent(post("/checkOverLimit").content(toRequest(request)));
+    GetCheckOverLimitResp response = toResponse(responseJson, GetCheckOverLimitResp.class);
+    assertTrue(response.isSuccess());
+    assertNotNull(response.getData());
+
+  }
 }

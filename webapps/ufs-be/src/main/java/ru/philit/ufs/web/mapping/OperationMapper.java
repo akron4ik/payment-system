@@ -32,6 +32,8 @@ public interface OperationMapper {
 
   List<CashOrderDto> asDto(List<CashOrder> in);
 
+  CashOrderDto asDto(CashOrder in);
+
   OperationTaskCardDeposit asEntity(CardDepositDto in);
 
   Long asEntity(String in);
