@@ -44,7 +44,7 @@
     <lombok.version>1.16.16</lombok.version>
     <org.javers.version>3.2.0</org.javers.version>
     <org.mapstruct.version>1.1.0.Final</org.mapstruct.version>
-    <puppycrawl.tools.version>7.6.1</puppycrawl.tools.version>
+    <puppycrawl.tools.version>8.18</puppycrawl.tools.version>
     <spring.boot.version>1.5.2.RELEASE</spring.boot.version>
     <spring.version>4.3.7.RELEASE</spring.version>
 
